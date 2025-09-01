@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { BookOpen, Download, Copy, Sparkles, ChevronDown, ChevronRight, Target, FileText, Clock, CheckCircle } from 'lucide-react';
+import { BookOpen, Download, Copy, Sparkles, ChevronDown, ChevronRight, Target, FileText, Clock, CheckCircle, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateCapstoneProject } from '@/lib/titleGenerator';
+import DocumentEditor from './DocumentEditor';
 
 interface GeneratedProject {
   mainTitle: string;
@@ -38,6 +39,7 @@ const CapstoneGenerator = () => {
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [expandedChapters, setExpandedChapters] = useState<number[]>([]);
+  const [isEditingDocument, setIsEditingDocument] = useState(false);
   const { toast } = useToast();
 
   const toggleChapter = (chapterNumber: number) => {
@@ -99,6 +101,24 @@ const CapstoneGenerator = () => {
       description: "Project structure copied to clipboard."
     });
   };
+
+  const handleStartWriting = () => {
+    setIsEditingDocument(true);
+  };
+
+  const handleBackToGenerator = () => {
+    setIsEditingDocument(false);
+  };
+
+  // Render DocumentEditor if in editing mode
+  if (isEditingDocument && generatedProject) {
+    return (
+      <DocumentEditor 
+        initialProject={generatedProject}
+        onBack={handleBackToGenerator}
+      />
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
@@ -199,6 +219,15 @@ const CapstoneGenerator = () => {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Generated Project Structure</CardTitle>
               <div className="flex gap-2">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={handleStartWriting}
+                  className="bg-gradient-primary hover:shadow-glow"
+                >
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Start Writing Document
+                </Button>
                 <Button variant="outline" size="sm" onClick={handleCopy}>
                   <Copy className="h-4 w-4 mr-2" />
                   Copy
