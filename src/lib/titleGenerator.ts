@@ -11,109 +11,166 @@ interface GeneratedProject {
     number: number;
     title: string;
     description: string;
+    objectives: string[];
+    sections: {
+      title: string;
+      content: string;
+    }[];
+    expectedPages: string;
+    keyComponents: string[];
   }[];
 }
 
-const fieldTemplates: Record<string, string[]> = {
-  'computer-science': [
-    'Development of', 'Implementation of', 'Design and Analysis of', 'A Study on', 'Optimization of'
-  ],
-  'business': [
-    'Strategic Analysis of', 'Impact of', 'A Comprehensive Study on', 'Performance Evaluation of', 'Market Analysis of'
-  ],
-  'education': [
-    'Effectiveness of', 'Impact of', 'A Comparative Study on', 'Implementation of', 'Assessment of'
-  ],
-  'psychology': [
-    'Psychological Impact of', 'Behavioral Analysis of', 'A Study on the Effects of', 'Understanding', 'Exploring'
-  ],
-  'engineering': [
-    'Design and Development of', 'Performance Analysis of', 'Optimization of', 'A Novel Approach to', 'Implementation of'
-  ],
-  'healthcare': [
-    'Clinical Study on', 'Impact of', 'Effectiveness of', 'A Comprehensive Analysis of', 'Health Outcomes of'
-  ],
-  'default': [
-    'A Study on', 'Analysis of', 'Investigation of', 'Comprehensive Review of', 'Impact of'
-  ]
+const enhancedFieldTemplates: Record<string, {
+  prefixes: string[];
+  contexts: string[];
+  methodologyFocus: string[];
+}> = {
+  'computer-science': {
+    prefixes: ['Development of an Intelligent', 'Implementation of Advanced', 'Design and Analysis of Scalable', 'Machine Learning Approach to', 'AI-Powered Solution for'],
+    contexts: [' System', ' Framework', ' Algorithm', ' Platform', ' Architecture'],
+    methodologyFocus: ['Agile Development', 'Machine Learning Models', 'System Architecture Design', 'Performance Testing', 'User Interface Design']
+  },
+  'business': {
+    prefixes: ['Strategic Digital Transformation of', 'Comprehensive Market Analysis of', 'Performance Optimization in', 'Sustainable Business Model for', 'Data-Driven Decision Making in'],
+    contexts: [' Organizations', ' Industries', ' Markets', ' Enterprises', ' Supply Chains'],
+    methodologyFocus: ['Statistical Analysis', 'Survey Research', 'Financial Modeling', 'Market Research', 'Case Study Analysis']
+  },
+  'education': {
+    prefixes: ['Innovative Pedagogical Approach to', 'Assessment and Evaluation of', 'Technology Integration in', 'Personalized Learning Solutions for', 'Evidence-Based Teaching Methods in'],
+    contexts: [' Learning Environments', ' Educational Systems', ' Curriculum Development', ' Student Achievement', ' Online Education'],
+    methodologyFocus: ['Educational Research Design', 'Learning Assessment', 'Curriculum Analysis', 'Student Performance Metrics', 'Qualitative Interviews']
+  },
+  'psychology': {
+    prefixes: ['Cognitive Behavioral Analysis of', 'Neuropsychological Investigation of', 'Social Psychology Study on', 'Developmental Assessment of', 'Therapeutic Intervention for'],
+    contexts: [' Human Behavior', ' Mental Health', ' Social Interactions', ' Cognitive Processes', ' Emotional Regulation'],
+    methodologyFocus: ['Experimental Design', 'Psychological Testing', 'Statistical Analysis', 'Clinical Interviews', 'Behavioral Observation']
+  },
+  'engineering': {
+    prefixes: ['Innovative Engineering Solution for', 'Sustainable Design and Development of', 'Performance Optimization of', 'Smart Technology Integration in', 'Advanced Materials Application in'],
+    contexts: [' Systems', ' Infrastructure', ' Manufacturing Processes', ' Renewable Energy', ' Automation'],
+    methodologyFocus: ['CAD Modeling', 'Simulation Analysis', 'Prototype Testing', 'Material Analysis', 'Performance Benchmarking']
+  },
+  'healthcare': {
+    prefixes: ['Clinical Effectiveness Study of', 'Evidence-Based Healthcare Intervention for', 'Population Health Analysis of', 'Medical Technology Assessment of', 'Patient-Centered Care Model for'],
+    contexts: [' Treatment Protocols', ' Healthcare Systems', ' Patient Outcomes', ' Medical Devices', ' Public Health'],
+    methodologyFocus: ['Clinical Trials', 'Statistical Analysis', 'Patient Surveys', 'Medical Records Analysis', 'Health Outcome Measurement']
+  }
 };
 
-const chapterTemplates = {
+const detailedChapterTemplates = {
   1: {
-    titles: [
-      'Introduction',
-      'Introduction and Background',
-      'Introduction to the Study',
-      'Problem Statement and Introduction'
+    titles: ['Introduction and Background', 'Problem Statement and Research Context', 'Introduction to the Study'],
+    objectives: [
+      'Establish the research problem and its significance',
+      'Define research objectives and questions',
+      'Present the scope and limitations of the study',
+      'Outline the structure and organization of the research'
     ],
-    descriptions: [
-      'This chapter introduces the research problem, objectives, significance of the study, scope and limitations, and provides an overview of the research methodology.',
-      'Presents the background of the study, statement of the problem, research objectives, research questions, and the significance of the study.',
-      'Introduces the research topic, establishes the context, defines the problem, and outlines the structure of the entire study.'
-    ]
+    sections: [
+      { title: 'Background of the Study', content: 'Provides contextual information about the research area and establishes the foundation for the investigation.' },
+      { title: 'Statement of the Problem', content: 'Clearly articulates the specific problem or gap that the research addresses.' },
+      { title: 'Research Objectives', content: 'Lists the primary and secondary objectives that guide the research investigation.' },
+      { title: 'Research Questions', content: 'Formulates specific questions that the study aims to answer through systematic investigation.' },
+      { title: 'Significance of the Study', content: 'Explains the importance and potential impact of the research findings.' },
+      { title: 'Scope and Limitations', content: 'Defines the boundaries of the study and acknowledges inherent constraints.' }
+    ],
+    expectedPages: '15-25 pages',
+    keyComponents: ['Problem identification', 'Research rationale', 'Conceptual framework', 'Thesis statement']
   },
   2: {
-    titles: [
-      'Review of Related Literature',
-      'Literature Review',
-      'Theoretical Framework and Literature Review',
-      'Review of Related Studies'
+    titles: ['Literature Review and Theoretical Framework', 'Review of Related Literature', 'Theoretical Foundation and Related Studies'],
+    objectives: [
+      'Synthesize existing knowledge in the research area',
+      'Identify gaps in current literature',
+      'Establish theoretical foundation for the study',
+      'Develop conceptual framework for research'
     ],
-    descriptions: [
-      'Comprehensive review of existing literature, theoretical frameworks, and previous studies related to the research topic.',
-      'Examines current knowledge, identifies gaps in existing research, and establishes the theoretical foundation for the study.',
-      'Synthesizes relevant literature, presents theoretical models, and develops the conceptual framework for the research.'
-    ]
+    sections: [
+      { title: 'Theoretical Framework', content: 'Presents the underlying theories that guide the research approach and methodology.' },
+      { title: 'Related Literature Review', content: 'Comprehensive analysis of previous studies, publications, and research findings.' },
+      { title: 'Conceptual Framework', content: 'Visual and textual representation of the relationships between key variables and concepts.' },
+      { title: 'Research Gap Analysis', content: 'Identification and analysis of gaps in existing knowledge that justify the current study.' },
+      { title: 'Literature Synthesis', content: 'Integration of findings from multiple sources to build a cohesive understanding.' }
+    ],
+    expectedPages: '25-40 pages',
+    keyComponents: ['Theory application', 'Critical analysis', 'Knowledge synthesis', 'Research positioning']
   },
   3: {
-    titles: [
-      'Research Methodology',
-      'Methods and Procedures',
-      'Research Design and Methodology',
-      'Methodology and Research Design'
+    titles: ['Research Methodology and Design', 'Methods and Procedures', 'Research Approach and Methodology'],
+    objectives: [
+      'Describe the research design and approach',
+      'Explain data collection procedures and instruments',
+      'Detail sampling methodology and population',
+      'Outline data analysis techniques and validation methods'
     ],
-    descriptions: [
-      'Details the research design, methodology, data collection procedures, sampling techniques, and data analysis methods.',
-      'Explains the research approach, instruments used for data collection, population and sampling, and statistical analysis procedures.',
-      'Describes the systematic approach used to conduct the research, including research design, data gathering procedures, and analytical techniques.'
-    ]
+    sections: [
+      { title: 'Research Design', content: 'Describes the overall strategy and framework chosen to integrate different components of the study.' },
+      { title: 'Population and Sampling', content: 'Defines the target population and explains the sampling methodology and size determination.' },
+      { title: 'Data Collection Instruments', content: 'Details the tools, surveys, interviews, or tests used to gather research data.' },
+      { title: 'Data Collection Procedures', content: 'Step-by-step explanation of how data will be collected, including timeline and protocols.' },
+      { title: 'Data Analysis Methods', content: 'Describes statistical or qualitative analysis techniques to be employed.' },
+      { title: 'Validity and Reliability', content: 'Measures taken to ensure the accuracy, consistency, and credibility of research findings.' }
+    ],
+    expectedPages: '20-30 pages',
+    keyComponents: ['Research design', 'Data collection', 'Analysis framework', 'Quality assurance']
   },
   4: {
-    titles: [
-      'Results and Discussion',
-      'Data Analysis and Results',
-      'Findings and Analysis',
-      'Results and Interpretation'
+    titles: ['Results and Discussion', 'Data Analysis and Findings', 'Research Findings and Analysis'],
+    objectives: [
+      'Present comprehensive analysis of collected data',
+      'Interpret findings in relation to research objectives',
+      'Discuss implications of results for theory and practice',
+      'Compare findings with existing literature and frameworks'
     ],
-    descriptions: [
-      'Presents the findings of the study, data analysis results, and comprehensive discussion of the outcomes in relation to the research objectives.',
-      'Analyzes collected data, presents statistical results, and discusses findings in the context of existing literature and theoretical framework.',
-      'Details the research findings, interprets results, and discusses implications of the outcomes for theory and practice.'
-    ]
+    sections: [
+      { title: 'Descriptive Analysis', content: 'Presentation of basic statistical information and demographic characteristics of the data.' },
+      { title: 'Inferential Analysis', content: 'Advanced statistical analysis including hypothesis testing and relationship examination.' },
+      { title: 'Findings Interpretation', content: 'Detailed explanation of what the results mean in the context of the research questions.' },
+      { title: 'Discussion of Results', content: 'Critical analysis of findings in relation to existing literature and theoretical framework.' },
+      { title: 'Implications for Practice', content: 'Practical applications and recommendations based on the research findings.' }
+    ],
+    expectedPages: '30-50 pages',
+    keyComponents: ['Data presentation', 'Statistical analysis', 'Result interpretation', 'Discussion synthesis']
   },
   5: {
-    titles: [
-      'Summary, Conclusions and Recommendations',
-      'Conclusions and Recommendations',
-      'Summary and Recommendations',
-      'Conclusions, Implications and Recommendations'
+    titles: ['Conclusions and Recommendations', 'Summary, Conclusions and Future Directions', 'Final Conclusions and Implications'],
+    objectives: [
+      'Summarize key findings and their significance',
+      'Draw conclusions based on research evidence',
+      'Provide actionable recommendations for stakeholders',
+      'Suggest directions for future research and development'
     ],
-    descriptions: [
-      'Summarizes the key findings, draws conclusions based on the research results, and provides recommendations for future research and practical applications.',
-      'Presents concluding thoughts, discusses implications of the findings, and suggests recommendations for policy, practice, and future studies.',
-      'Concludes the study by summarizing major findings, discussing limitations, and providing actionable recommendations.'
-    ]
+    sections: [
+      { title: 'Summary of Findings', content: 'Concise overview of the main results and discoveries from the research investigation.' },
+      { title: 'Conclusions', content: 'Definitive statements about what the research has demonstrated or proven.' },
+      { title: 'Practical Recommendations', content: 'Specific, actionable suggestions for practitioners, organizations, or policymakers.' },
+      { title: 'Theoretical Contributions', content: 'Explanation of how the research advances knowledge in the field.' },
+      { title: 'Limitations and Future Research', content: 'Acknowledgment of study constraints and suggestions for future investigations.' },
+      { title: 'Final Reflections', content: 'Personal insights and broader implications of the research journey and outcomes.' }
+    ],
+    expectedPages: '15-25 pages',
+    keyComponents: ['Research synthesis', 'Evidence-based conclusions', 'Strategic recommendations', 'Future directions']
   }
 };
 
 export function generateCapstoneProject(formData: FormData): GeneratedProject {
   const { field, topic, keywords, researchType } = formData;
   
-  // Generate main title
-  const templates = fieldTemplates[field] || fieldTemplates.default;
-  const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+  // Generate main title with enhanced intelligence
+  const fieldTemplate = enhancedFieldTemplates[field];
+  let mainTitle = '';
   
-  let mainTitle = `${randomTemplate} ${topic}`;
+  if (fieldTemplate) {
+    const randomPrefix = fieldTemplate.prefixes[Math.floor(Math.random() * fieldTemplate.prefixes.length)];
+    const randomContext = fieldTemplate.contexts[Math.floor(Math.random() * fieldTemplate.contexts.length)];
+    mainTitle = `${randomPrefix} ${topic}${randomContext}`;
+  } else {
+    // Fallback for other fields
+    const genericPrefixes = ['Comprehensive Analysis of', 'Investigation into', 'Advanced Study on', 'Strategic Approach to'];
+    const randomPrefix = genericPrefixes[Math.floor(Math.random() * genericPrefixes.length)];
+    mainTitle = `${randomPrefix} ${topic}`;
+  }
   
   // Add research type context if specified
   if (researchType) {
@@ -130,31 +187,29 @@ export function generateCapstoneProject(formData: FormData): GeneratedProject {
       mainTitle += typeModifiers[researchType];
     }
   }
-  
-  // Add field context if relevant
-  const fieldContexts: Record<string, string> = {
-    'computer-science': ' in Computer Science Applications',
-    'business': ' in Business Organizations',
-    'education': ' in Educational Settings',
-    'healthcare': ' in Healthcare Systems',
-    'engineering': ' in Engineering Solutions'
-  };
-  
-  if (fieldContexts[field] && !mainTitle.toLowerCase().includes(field.replace('-', ' '))) {
-    mainTitle += fieldContexts[field];
-  }
 
-  // Generate chapters
+  // Generate comprehensive chapters
   const chapters = [];
   for (let i = 1; i <= 5; i++) {
-    const chapterData = chapterTemplates[i as keyof typeof chapterTemplates];
+    const chapterData = detailedChapterTemplates[i as keyof typeof detailedChapterTemplates];
     const randomTitle = chapterData.titles[Math.floor(Math.random() * chapterData.titles.length)];
-    const randomDescription = chapterData.descriptions[Math.floor(Math.random() * chapterData.descriptions.length)];
+    
+    // Customize chapter description based on field
+    let description = `This chapter focuses on ${chapterData.sections[0].title.toLowerCase()} and related components.`;
+    if (fieldTemplate && i === 3) {
+      // Customize methodology chapter with field-specific focus
+      const methodologyFocus = fieldTemplate.methodologyFocus[Math.floor(Math.random() * fieldTemplate.methodologyFocus.length)];
+      description = `This chapter details the research methodology with emphasis on ${methodologyFocus.toLowerCase()} and systematic data collection procedures.`;
+    }
     
     chapters.push({
       number: i,
       title: randomTitle,
-      description: randomDescription
+      description,
+      objectives: chapterData.objectives,
+      sections: chapterData.sections,
+      expectedPages: chapterData.expectedPages,
+      keyComponents: chapterData.keyComponents
     });
   }
 

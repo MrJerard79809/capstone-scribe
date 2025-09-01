@@ -5,7 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BookOpen, Download, Copy, Sparkles } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { BookOpen, Download, Copy, Sparkles, ChevronDown, ChevronRight, Target, FileText, Clock, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateCapstoneProject } from '@/lib/titleGenerator';
 
@@ -15,6 +18,13 @@ interface GeneratedProject {
     number: number;
     title: string;
     description: string;
+    objectives: string[];
+    sections: {
+      title: string;
+      content: string;
+    }[];
+    expectedPages: string;
+    keyComponents: string[];
   }[];
 }
 
@@ -27,7 +37,25 @@ const CapstoneGenerator = () => {
   });
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [expandedChapters, setExpandedChapters] = useState<number[]>([]);
   const { toast } = useToast();
+
+  const toggleChapter = (chapterNumber: number) => {
+    setExpandedChapters(prev => 
+      prev.includes(chapterNumber) 
+        ? prev.filter(n => n !== chapterNumber)
+        : [...prev, chapterNumber]
+    );
+  };
+
+  const expandAllChapters = () => {
+    if (!generatedProject) return;
+    setExpandedChapters(generatedProject.chapters.map(c => c.number));
+  };
+
+  const collapseAllChapters = () => {
+    setExpandedChapters([]);
+  };
 
   const handleGenerate = async () => {
     if (!formData.field || !formData.topic) {
@@ -184,17 +212,116 @@ const CapstoneGenerator = () => {
                 <p className="text-lg font-medium">{generatedProject.mainTitle}</p>
               </div>
 
-              {/* Chapters */}
+              {/* Chapter Controls */}
+              <div className="flex gap-2 mb-4">
+                <Button variant="outline" size="sm" onClick={expandAllChapters}>
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Expand All
+                </Button>
+                <Button variant="outline" size="sm" onClick={collapseAllChapters}>
+                  <ChevronRight className="h-4 w-4 mr-2" />
+                  Collapse All
+                </Button>
+              </div>
+
+              {/* Interactive Chapters */}
               <div className="space-y-4">
                 {generatedProject.chapters.map((chapter) => (
-                  <div key={chapter.number} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                    <h4 className="font-semibold text-primary mb-2">
-                      Chapter {chapter.number}: {chapter.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {chapter.description}
-                    </p>
-                  </div>
+                  <Collapsible 
+                    key={chapter.number}
+                    open={expandedChapters.includes(chapter.number)}
+                    onOpenChange={() => toggleChapter(chapter.number)}
+                  >
+                    <Card className="overflow-hidden hover:shadow-md transition-all duration-200">
+                      <CollapsibleTrigger asChild>
+                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                                Chapter {chapter.number}
+                              </Badge>
+                              <CardTitle className="text-lg">{chapter.title}</CardTitle>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-emerald-500" />
+                              {expandedChapters.includes(chapter.number) ? 
+                                <ChevronDown className="h-5 w-5" /> : 
+                                <ChevronRight className="h-5 w-5" />
+                              }
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground text-left mt-2">
+                            {chapter.description}
+                          </p>
+                        </CardHeader>
+                      </CollapsibleTrigger>
+                      
+                      <CollapsibleContent>
+                        <CardContent className="space-y-6 pt-0">
+                          <Separator />
+                          
+                          {/* Chapter Overview */}
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Expected Length</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground pl-6">{chapter.expectedPages}</p>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Target className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Key Components</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1 pl-6">
+                                {chapter.keyComponents.map((component, idx) => (
+                                  <Badge key={idx} variant="outline" className="text-xs">
+                                    {component}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Chapter Objectives */}
+                          <div className="space-y-3">
+                            <h5 className="font-semibold flex items-center gap-2">
+                              <Target className="h-4 w-4 text-primary" />
+                              Learning Objectives
+                            </h5>
+                            <ul className="space-y-2">
+                              {chapter.objectives.map((objective, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                                  <span className="text-sm">{objective}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          {/* Chapter Sections */}
+                          <div className="space-y-3">
+                            <h5 className="font-semibold flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-primary" />
+                              Chapter Sections
+                            </h5>
+                            <div className="space-y-3">
+                              {chapter.sections.map((section, idx) => (
+                                <div key={idx} className="border-l-2 border-primary/20 pl-4 space-y-1">
+                                  <h6 className="font-medium text-sm">{section.title}</h6>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {section.content}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Card>
+                  </Collapsible>
                 ))}
               </div>
             </CardContent>
