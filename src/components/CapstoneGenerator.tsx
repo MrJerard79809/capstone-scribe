@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { BookOpen, Download, Copy, Sparkles, ChevronDown, ChevronRight, Target, FileText, Clock, CheckCircle, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateTitleOptions, generateCapstoneProjectWithTitle } from '@/lib/titleGenerator';
+import { generateCapstoneProject } from '@/lib/titleGenerator';
 import DocumentEditor from './DocumentEditor';
 
 interface GeneratedProject {
@@ -36,14 +36,10 @@ const CapstoneGenerator = () => {
     keywords: '',
     researchType: ''
   });
-  const [titleOptions, setTitleOptions] = useState<string[]>([]);
-  const [selectedTitle, setSelectedTitle] = useState<string>('');
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isGeneratingDocument, setIsGeneratingDocument] = useState(false);
   const [expandedChapters, setExpandedChapters] = useState<number[]>([]);
   const [isEditingDocument, setIsEditingDocument] = useState(false);
-  const [step, setStep] = useState<'form' | 'title-selection' | 'document'>('form');
   const { toast } = useToast();
 
   const toggleChapter = (chapterNumber: number) => {
@@ -63,7 +59,7 @@ const CapstoneGenerator = () => {
     setExpandedChapters([]);
   };
 
-  const handleGenerateTitles = async () => {
+  const handleGenerate = async () => {
     if (!formData.field || !formData.topic) {
       toast({
         title: "Missing Information",
@@ -75,69 +71,21 @@ const CapstoneGenerator = () => {
 
     setIsGenerating(true);
     try {
-      const titles = generateTitleOptions(formData);
-      setTitleOptions(titles);
-      setStep('title-selection');
+      const project = generateCapstoneProject(formData);
+      setGeneratedProject(project);
       toast({
         title: "Success!",
-        description: "Title options have been generated. Please select your preferred title."
+        description: "Your capstone project structure has been generated."
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate titles. Please try again.",
+        description: "Failed to generate project. Please try again.",
         variant: "destructive"
       });
     } finally {
       setIsGenerating(false);
     }
-  };
-
-  const handleTitleSelect = (title: string) => {
-    setSelectedTitle(title);
-  };
-
-  const handleGenerateDocument = async () => {
-    if (!selectedTitle) {
-      toast({
-        title: "No Title Selected",
-        description: "Please select a title before generating the document.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsGeneratingDocument(true);
-    try {
-      const project = generateCapstoneProjectWithTitle(formData, selectedTitle);
-      setGeneratedProject(project);
-      setStep('document');
-      toast({
-        title: "Success!",
-        description: "Your complete capstone project has been generated."
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate document. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGeneratingDocument(false);
-    }
-  };
-
-  const handleBackToForm = () => {
-    setStep('form');
-    setTitleOptions([]);
-    setSelectedTitle('');
-    setGeneratedProject(null);
-  };
-
-  const handleBackToTitles = () => {
-    setStep('title-selection');
-    setSelectedTitle('');
-    setGeneratedProject(null);
   };
 
   const handleCopy = () => {
@@ -188,177 +136,89 @@ const CapstoneGenerator = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Input Form - Step 1 */}
-        {(step === 'form' || step === 'title-selection') && (
+        {/* Input Form */}
+        <Card className="shadow-elegant">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Project Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="field">Field of Study *</Label>
+              <Select value={formData.field} onValueChange={(value) => setFormData({...formData, field: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your field of study" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="computer-science">Computer Science</SelectItem>
+                  <SelectItem value="business">Business Administration</SelectItem>
+                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="psychology">Psychology</SelectItem>
+                  <SelectItem value="engineering">Engineering</SelectItem>
+                  <SelectItem value="healthcare">Healthcare</SelectItem>
+                  <SelectItem value="social-sciences">Social Sciences</SelectItem>
+                  <SelectItem value="natural-sciences">Natural Sciences</SelectItem>
+                  <SelectItem value="arts">Arts & Humanities</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="topic">Research Topic *</Label>
+              <Input
+                id="topic"
+                placeholder="e.g., Machine Learning in Healthcare"
+                value={formData.topic}
+                onChange={(e) => setFormData({...formData, topic: e.target.value})}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keywords">Keywords (Optional)</Label>
+              <Input
+                id="keywords"
+                placeholder="e.g., AI, medical diagnosis, deep learning"
+                value={formData.keywords}
+                onChange={(e) => setFormData({...formData, keywords: e.target.value})}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="researchType">Research Type</Label>
+              <Select value={formData.researchType} onValueChange={(value) => setFormData({...formData, researchType: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select research approach" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="quantitative">Quantitative Research</SelectItem>
+                  <SelectItem value="qualitative">Qualitative Research</SelectItem>
+                  <SelectItem value="mixed">Mixed Methods</SelectItem>
+                  <SelectItem value="experimental">Experimental</SelectItem>
+                  <SelectItem value="case-study">Case Study</SelectItem>
+                  <SelectItem value="theoretical">Theoretical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating}
+              className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
+            >
+              {isGenerating ? "Generating..." : "Generate Project Structure"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Generated Output */}
+        {generatedProject && (
           <Card className="shadow-elegant">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                Project Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="field">Field of Study *</Label>
-                <Select 
-                  value={formData.field} 
-                  onValueChange={(value) => setFormData({...formData, field: value})}
-                  disabled={step === 'title-selection'}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your field of study" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="computer-science">Computer Science</SelectItem>
-                    <SelectItem value="business">Business Administration</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
-                    <SelectItem value="psychology">Psychology</SelectItem>
-                    <SelectItem value="engineering">Engineering</SelectItem>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="social-sciences">Social Sciences</SelectItem>
-                    <SelectItem value="natural-sciences">Natural Sciences</SelectItem>
-                    <SelectItem value="arts">Arts & Humanities</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="topic">Research Topic *</Label>
-                <Input
-                  id="topic"
-                  placeholder="e.g., Machine Learning in Healthcare"
-                  value={formData.topic}
-                  onChange={(e) => setFormData({...formData, topic: e.target.value})}
-                  disabled={step === 'title-selection'}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="keywords">Keywords (Optional)</Label>
-                <Input
-                  id="keywords"
-                  placeholder="e.g., AI, medical diagnosis, deep learning"
-                  value={formData.keywords}
-                  onChange={(e) => setFormData({...formData, keywords: e.target.value})}
-                  disabled={step === 'title-selection'}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="researchType">Research Type</Label>
-                <Select 
-                  value={formData.researchType} 
-                  onValueChange={(value) => setFormData({...formData, researchType: value})}
-                  disabled={step === 'title-selection'}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select research approach" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="quantitative">Quantitative Research</SelectItem>
-                    <SelectItem value="qualitative">Qualitative Research</SelectItem>
-                    <SelectItem value="mixed">Mixed Methods</SelectItem>
-                    <SelectItem value="experimental">Experimental</SelectItem>
-                    <SelectItem value="case-study">Case Study</SelectItem>
-                    <SelectItem value="theoretical">Theoretical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {step === 'form' && (
-                <Button 
-                  onClick={handleGenerateTitles} 
-                  disabled={isGenerating}
-                  className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                >
-                  {isGenerating ? "Generating Titles..." : "Generate Title Options"}
-                </Button>
-              )}
-
-              {step === 'title-selection' && (
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleBackToForm}
-                    className="flex-1"
-                  >
-                    Back to Form
-                  </Button>
-                  <Button 
-                    onClick={handleGenerateDocument} 
-                    disabled={isGeneratingDocument || !selectedTitle}
-                    className="flex-1 bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                  >
-                    {isGeneratingDocument ? "Generating Document..." : "Generate Full Document"}
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Title Selection - Step 2 */}
-        {step === 'title-selection' && (
-          <Card className="shadow-elegant animate-fade-in">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                Select Your Preferred Title
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Choose from these professionally generated titles for your capstone project
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {titleOptions.map((title, index) => (
-                <Card 
-                  key={index} 
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-md hover-scale ${
-                    selectedTitle === title 
-                      ? 'ring-2 ring-primary bg-primary/5 border-primary' 
-                      : 'hover:bg-muted/30'
-                  }`}
-                  onClick={() => handleTitleSelect(title)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${
-                        selectedTitle === title 
-                          ? 'border-primary bg-primary' 
-                          : 'border-muted-foreground'
-                      }`}>
-                        {selectedTitle === title && (
-                          <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm leading-relaxed">{title}</h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Option {index + 1} - Click to select this title
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Document View - Step 3 */}
-        {step === 'document' && generatedProject && (
-          <Card className="shadow-elegant animate-fade-in">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Generated Project Structure</CardTitle>
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleBackToTitles}
-                >
-                  Change Title
-                </Button>
                 <Button 
                   variant="default" 
                   size="sm" 
