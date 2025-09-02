@@ -260,39 +260,69 @@ Key aspects of this research include ${keywordList.slice(0, 3).join(', ')}, whic
   };
 };
 
-export function generateCapstoneProject(formData: FormData): GeneratedProject {
-  const { field, topic, keywords, researchType } = formData;
-  
-  // Generate main title with enhanced intelligence
+// Function to generate multiple title options
+export function generateTitleOptions(formData: FormData): string[] {
+  const { field, topic, researchType } = formData;
   const fieldTemplate = enhancedFieldTemplates[field];
-  let mainTitle = '';
+  const titles: string[] = [];
   
   if (fieldTemplate) {
-    const randomPrefix = fieldTemplate.prefixes[Math.floor(Math.random() * fieldTemplate.prefixes.length)];
-    const randomContext = fieldTemplate.contexts[Math.floor(Math.random() * fieldTemplate.contexts.length)];
-    mainTitle = `${randomPrefix} ${topic}${randomContext}`;
+    // Generate 5 different titles using various combinations
+    fieldTemplate.prefixes.forEach((prefix, index) => {
+      if (titles.length < 5) {
+        const context = fieldTemplate.contexts[index % fieldTemplate.contexts.length];
+        let title = `${prefix} ${topic}${context}`;
+        
+        // Add research type modifier for variety
+        if (researchType && index % 2 === 0) {
+          const typeModifiers: Record<string, string> = {
+            'quantitative': ': A Quantitative Analysis',
+            'qualitative': ': A Qualitative Investigation', 
+            'mixed': ': A Mixed-Methods Approach',
+            'experimental': ': An Experimental Study',
+            'case-study': ': A Case Study Analysis',
+            'theoretical': ': A Theoretical Framework'
+          };
+          
+          if (typeModifiers[researchType]) {
+            title += typeModifiers[researchType];
+          }
+        }
+        
+        titles.push(title);
+      }
+    });
+    
+    // Add more variations if we have less than 5
+    while (titles.length < 5) {
+      const randomPrefix = fieldTemplate.prefixes[Math.floor(Math.random() * fieldTemplate.prefixes.length)];
+      const randomContext = fieldTemplate.contexts[Math.floor(Math.random() * fieldTemplate.contexts.length)];
+      const title = `${randomPrefix} ${topic}${randomContext}`;
+      
+      if (!titles.includes(title)) {
+        titles.push(title);
+      }
+    }
   } else {
-    // Fallback for other fields
-    const genericPrefixes = ['Comprehensive Analysis of', 'Investigation into', 'Advanced Study on', 'Strategic Approach to'];
-    const randomPrefix = genericPrefixes[Math.floor(Math.random() * genericPrefixes.length)];
-    mainTitle = `${randomPrefix} ${topic}`;
+    // Fallback for other fields - generate 5 generic titles
+    const genericPrefixes = [
+      'Comprehensive Analysis of',
+      'Investigation into',
+      'Advanced Study on',
+      'Strategic Approach to',
+      'Innovative Solutions for'
+    ];
+    
+    genericPrefixes.forEach(prefix => {
+      titles.push(`${prefix} ${topic}`);
+    });
   }
   
-  // Add research type context if specified
-  if (researchType) {
-    const typeModifiers: Record<string, string> = {
-      'quantitative': ': A Quantitative Analysis',
-      'qualitative': ': A Qualitative Investigation', 
-      'mixed': ': A Mixed-Methods Approach',
-      'experimental': ': An Experimental Study',
-      'case-study': ': A Case Study Analysis',
-      'theoretical': ': A Theoretical Framework'
-    };
-    
-    if (typeModifiers[researchType]) {
-      mainTitle += typeModifiers[researchType];
-    }
-  }
+  return titles.slice(0, 5);
+}
+
+export function generateCapstoneProjectWithTitle(formData: FormData, selectedTitle: string): GeneratedProject {
+  const { field, topic, keywords, researchType } = formData;
 
   // Generate comprehensive chapters with complete content
   const chapters = [];
@@ -301,6 +331,7 @@ export function generateCapstoneProject(formData: FormData): GeneratedProject {
     const randomTitle = chapterData.titles[Math.floor(Math.random() * chapterData.titles.length)];
     
     // Customize chapter description based on field
+    const fieldTemplate = enhancedFieldTemplates[field];
     let description = `This chapter focuses on ${chapterData.sections[0].title.toLowerCase()} and related components.`;
     if (fieldTemplate && i === 3) {
       // Customize methodology chapter with field-specific focus
@@ -323,7 +354,7 @@ export function generateCapstoneProject(formData: FormData): GeneratedProject {
   }
 
   return {
-    mainTitle,
+    mainTitle: selectedTitle, // Use the selected title from user choice
     chapters
   };
 }
