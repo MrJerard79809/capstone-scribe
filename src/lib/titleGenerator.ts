@@ -154,6 +154,112 @@ const detailedChapterTemplates = {
   }
 };
 
+// Function to generate complete chapter content based on field and topic
+const generateFullChapterContent = (chapterTemplate: any, field: string, topic: string, keywords: string, researchType: string, chapterNumber: number) => {
+  const fieldTemplate = enhancedFieldTemplates[field] || enhancedFieldTemplates['other'];
+  const keywordList = keywords.split(',').map(k => k.trim()).filter(k => k);
+  
+  // Generate complete, detailed content for each section
+  const generateSectionContent = (sectionTitle: string, sectionOutline: string) => {
+    // Field-specific content templates
+    const fieldSpecificContent = {
+      'computer-science': {
+        1: `The ${topic} represents a significant advancement in computational systems and software engineering. This research addresses critical challenges in algorithm optimization, system scalability, and user experience enhancement. Current technological landscapes demand innovative solutions that can adapt to rapidly evolving digital environments while maintaining robust performance standards.
+
+The significance of this study lies in its potential to revolutionize how we approach ${topic} within computational frameworks. Through comprehensive analysis of existing systems and identification of performance bottlenecks, this research establishes a foundation for developing more efficient and reliable technological solutions.
+
+Key technical considerations include system architecture design, database optimization strategies, and user interface development principles. The proposed methodology incorporates industry best practices while introducing novel approaches to address specific technical challenges. Performance metrics and benchmarking procedures ensure rigorous evaluation of proposed solutions.`,
+        2: `Extensive literature review reveals significant developments in ${topic} over the past decade. Foundational theories in computer science provide the theoretical framework for understanding complex computational processes and system interactions. Previous research has established key principles that guide current technological implementations.
+
+Current studies demonstrate various approaches to ${topic}, each with distinct advantages and limitations. Comparative analysis of existing solutions reveals opportunities for improvement and innovation. The integration of artificial intelligence and machine learning techniques has opened new possibilities for enhanced system capabilities.
+
+Theoretical foundations encompass algorithm complexity theory, system design principles, and user-centered design methodologies. These frameworks provide the necessary context for understanding current challenges and developing effective solutions.`,
+        3: `The research methodology employs a systematic approach combining quantitative analysis with practical implementation. Data collection procedures include performance testing, user surveys, and system monitoring protocols. The experimental design ensures reliable and valid results through controlled testing environments.
+
+Technical implementation follows agile development principles with iterative testing and continuous integration. Code quality assurance measures include peer reviews, automated testing suites, and adherence to industry coding standards. Performance benchmarking utilizes standardized testing frameworks to ensure accurate measurements.
+
+Validation procedures include unit testing, integration testing, and user acceptance testing. Statistical analysis of performance data employs appropriate mathematical models to identify significant patterns and correlations.`,
+        4: `Comprehensive analysis of collected data reveals significant improvements in system performance and user satisfaction. Statistical evaluation demonstrates measurable enhancements in processing speed, resource utilization, and overall system efficiency. Comparative studies with existing solutions show superior performance across multiple metrics.
+
+User feedback analysis indicates high levels of satisfaction with the proposed solution. Usability testing results demonstrate improved user experience and reduced learning curves. Performance monitoring data confirms stable operation under various load conditions.
+
+The findings support the initial hypothesis regarding improved system capabilities through innovative technological approaches. Data visualization techniques present results in accessible formats for stakeholder review and decision-making processes.`,
+        5: `Research findings confirm the effectiveness of the proposed approach to ${topic}. The developed solution successfully addresses identified challenges while maintaining high performance standards. Practical applications demonstrate real-world viability and scalability potential.
+
+Recommendations for implementation include phased deployment strategies, comprehensive training programs, and ongoing maintenance protocols. Future research directions encompass advanced algorithm optimization, integration with emerging technologies, and expansion to related application domains.
+
+The theoretical contributions of this research advance understanding of ${topic} within computational frameworks. Practical implications provide valuable insights for industry practitioners and technology developers seeking to implement similar solutions.`
+      },
+      'business': {
+        1: `The business landscape surrounding ${topic} has undergone significant transformation in recent years. Market dynamics, consumer behavior patterns, and technological advancements have created new opportunities and challenges for organizations. This research addresses critical business problems that impact organizational performance and competitive positioning.
+
+Understanding the strategic implications of ${topic} requires comprehensive analysis of market conditions, stakeholder expectations, and operational capabilities. The significance of this study extends beyond theoretical knowledge to provide practical insights for business leaders and decision-makers.
+
+Current business environments demand data-driven approaches to problem-solving and strategic planning. This research employs rigorous analytical methods to examine complex business phenomena and develop evidence-based recommendations.`,
+        2: `Business literature reveals diverse perspectives on ${topic} and its impact on organizational success. Strategic management theories provide frameworks for understanding competitive dynamics and resource allocation decisions. Previous research has identified key factors that influence business performance and sustainability.
+
+Contemporary studies examine the relationship between ${topic} and various business outcomes including profitability, market share, and customer satisfaction. Theoretical models from economics, management science, and organizational behavior inform the conceptual framework for this research.
+
+Emerging trends in digital transformation, sustainability initiatives, and stakeholder capitalism influence how organizations approach ${topic}. Literature synthesis reveals gaps in current understanding that this research aims to address.`,
+        3: `The research methodology combines quantitative analysis with qualitative insights to provide comprehensive understanding of business phenomena. Data collection includes financial analysis, market research surveys, and stakeholder interviews. The mixed-methods approach ensures robust findings that can inform strategic decision-making.
+
+Statistical analysis employs advanced econometric techniques to identify causal relationships and predict future trends. Case study methodology provides in-depth examination of specific organizational contexts and implementation challenges.
+
+Validation procedures include triangulation of data sources, peer review of analytical methods, and stakeholder feedback on preliminary findings. Ethical considerations ensure responsible conduct of business research.`,
+        4: `Financial analysis reveals significant correlations between ${topic} and key performance indicators. Statistical models demonstrate the impact of strategic initiatives on organizational outcomes. Comparative analysis across industry sectors provides insights into best practices and implementation strategies.
+
+Market research findings indicate strong consumer demand for innovative approaches to ${topic}. Stakeholder interviews reveal diverse perspectives on challenges and opportunities. The data supports strategic recommendations for organizational improvement.
+
+Risk assessment identifies potential implementation challenges and mitigation strategies. Cost-benefit analysis demonstrates the economic viability of proposed business solutions.`,
+        5: `Research conclusions support the strategic importance of ${topic} for organizational success. Evidence-based recommendations provide actionable guidance for business leaders and policymakers. The findings contribute to theoretical understanding while offering practical applications.
+
+Implementation strategies should consider organizational capabilities, market conditions, and stakeholder expectations. Change management processes must address potential resistance and ensure successful adoption of new approaches.
+
+Future research should explore emerging trends and their implications for business strategy. Longitudinal studies would provide insights into long-term impacts and sustainability of proposed solutions.`
+      }
+    };
+
+    // Get field-specific content or use generic template
+    const fieldContent = fieldSpecificContent[field as keyof typeof fieldSpecificContent];
+    let content = '';
+
+    if (fieldContent && fieldContent[chapterNumber as keyof typeof fieldContent]) {
+      content = fieldContent[chapterNumber as keyof typeof fieldContent];
+    } else {
+      // Generic content generation
+      const commonIntros = [
+        `This section provides comprehensive examination of ${sectionTitle.toLowerCase()} in relation to ${topic}.`,
+        `The following analysis presents detailed investigation of ${sectionTitle.toLowerCase()} within the context of ${topic}.`,
+        `This ${sectionTitle.toLowerCase()} establishes the foundation for understanding ${topic} and its implications.`,
+        `The comprehensive study of ${sectionTitle.toLowerCase()} reveals important insights about ${topic}.`
+      ];
+
+      content = `${commonIntros[chapterNumber % commonIntros.length]}
+
+The research demonstrates significant findings that contribute to both theoretical understanding and practical applications. Key factors include systematic analysis of current practices, identification of improvement opportunities, and development of evidence-based recommendations.
+
+Through rigorous investigation and careful analysis, this study provides valuable insights for researchers, practitioners, and policymakers. The findings support informed decision-making and strategic planning processes.`;
+    }
+
+    // Add keyword integration if available
+    if (keywordList.length > 0) {
+      content += `
+
+Key aspects of this research include ${keywordList.slice(0, 3).join(', ')}, which are essential components of ${topic}. These elements provide critical context for understanding the broader implications of the study and its potential applications.`;
+    }
+
+    return content;
+  };
+
+  return {
+    ...chapterTemplate,
+    sections: chapterTemplate.sections.map((section: any) => ({
+      ...section,
+      content: generateSectionContent(section.title, section.content)
+    }))
+  };
+};
+
 export function generateCapstoneProject(formData: FormData): GeneratedProject {
   const { field, topic, keywords, researchType } = formData;
   
@@ -188,7 +294,7 @@ export function generateCapstoneProject(formData: FormData): GeneratedProject {
     }
   }
 
-  // Generate comprehensive chapters
+  // Generate comprehensive chapters with complete content
   const chapters = [];
   for (let i = 1; i <= 5; i++) {
     const chapterData = detailedChapterTemplates[i as keyof typeof detailedChapterTemplates];
@@ -202,14 +308,17 @@ export function generateCapstoneProject(formData: FormData): GeneratedProject {
       description = `This chapter details the research methodology with emphasis on ${methodologyFocus.toLowerCase()} and systematic data collection procedures.`;
     }
     
+    // Generate complete chapter with full content
+    const completeChapter = generateFullChapterContent(chapterData, field, topic, keywords, researchType, i);
+    
     chapters.push({
       number: i,
       title: randomTitle,
       description,
-      objectives: chapterData.objectives,
-      sections: chapterData.sections,
-      expectedPages: chapterData.expectedPages,
-      keyComponents: chapterData.keyComponents
+      objectives: completeChapter.objectives,
+      sections: completeChapter.sections, // Now contains full content
+      expectedPages: completeChapter.expectedPages,
+      keyComponents: completeChapter.keyComponents
     });
   }
 
