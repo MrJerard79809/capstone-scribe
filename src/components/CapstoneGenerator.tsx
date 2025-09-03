@@ -173,31 +173,32 @@ const CapstoneGenerator = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3">
-          <BookOpen className="h-10 w-10 text-primary" />
-          <h1 className="text-4xl font-bold bg-gradient-academic bg-clip-text text-transparent">
-            Capstone Project Generator
-          </h1>
+    <div className="min-h-screen bg-gradient-subtle">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-3 sm:space-y-4 pt-4 sm:pt-0">
+          <div className="flex items-center justify-center gap-2 sm:gap-3">
+            <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-academic bg-clip-text text-transparent">
+              Capstone Project Generator
+            </h1>
+          </div>
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            Generate professional titles and structure for your capstone project with AI-powered academic formatting
+          </p>
         </div>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Generate professional titles and structure for your capstone project with AI-powered academic formatting
-        </p>
-      </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         {/* Input Form - Step 1 */}
         {(step === 'form' || step === 'title-selection') && (
-          <Card className="shadow-elegant">
+          <Card className="shadow-elegant lg:sticky lg:top-8 h-fit">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <Sparkles className="h-5 w-5 text-primary" />
                 Project Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="field">Field of Study *</Label>
                 <Select 
@@ -270,25 +271,25 @@ const CapstoneGenerator = () => {
                 <Button 
                   onClick={handleGenerateTitles} 
                   disabled={isGenerating}
-                  className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                  className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-base font-medium"
                 >
                   {isGenerating ? "Generating Titles..." : "Generate Title Options"}
                 </Button>
               )}
 
               {step === 'title-selection' && (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
                   <Button 
                     variant="outline" 
                     onClick={handleBackToForm}
-                    className="flex-1"
+                    className="flex-1 h-12 text-base"
                   >
                     Back to Form
                   </Button>
                   <Button 
                     onClick={handleGenerateDocument} 
                     disabled={isGeneratingDocument || !selectedTitle}
-                    className="flex-1 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                    className="flex-1 h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-base font-medium"
                   >
                     {isGeneratingDocument ? "Generating Document..." : "Generate Full Document"}
                   </Button>
@@ -302,40 +303,40 @@ const CapstoneGenerator = () => {
         {step === 'title-selection' && (
           <Card className="shadow-elegant animate-fade-in">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <Target className="h-5 w-5 text-primary" />
                 Select Your Preferred Title
               </CardTitle>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Choose from these professionally generated titles for your capstone project
               </p>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               {titleOptions.map((title, index) => (
                 <Card 
                   key={index} 
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-md hover-scale ${
+                  className={`cursor-pointer transition-all duration-200 hover:shadow-md hover-scale touch-manipulation ${
                     selectedTitle === title 
                       ? 'ring-2 ring-primary bg-primary/5 border-primary' 
                       : 'hover:bg-muted/30'
                   }`}
                   onClick={() => handleTitleSelect(title)}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 sm:p-5">
                     <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                      <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
                         selectedTitle === title 
                           ? 'border-primary bg-primary' 
                           : 'border-muted-foreground'
                       }`}>
                         {selectedTitle === title && (
-                          <CheckCircle className="h-4 w-4 text-primary-foreground" />
+                          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
                         )}
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm leading-relaxed">{title}</h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Option {index + 1} - Click to select this title
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm sm:text-base leading-relaxed">{title}</h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                          Option {index + 1} - Tap to select this title
                         </p>
                       </div>
                     </div>
@@ -348,32 +349,34 @@ const CapstoneGenerator = () => {
 
         {/* Document View - Step 3 */}
         {step === 'document' && generatedProject && (
-          <Card className="shadow-elegant animate-fade-in">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Generated Project Structure</CardTitle>
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleBackToTitles}
-                >
-                  Change Title
-                </Button>
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={handleStartWriting}
-                  className="bg-gradient-primary hover:shadow-glow"
-                >
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Start Writing Document
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleCopy}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy
-                </Button>
-              </div>
-            </CardHeader>
+          <div className="lg:col-span-2">
+            <Card className="shadow-elegant animate-fade-in">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <CardTitle className="text-lg sm:text-xl">Generated Project Structure</CardTitle>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleBackToTitles}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Change Title
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={handleStartWriting}
+                    className="bg-gradient-primary hover:shadow-glow flex-1 sm:flex-none"
+                  >
+                    <Edit3 className="h-4 w-4 mr-2" />
+                    Start Writing
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1 sm:flex-none">
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+              </CardHeader>
             <CardContent className="space-y-6">
               {/* Main Title */}
               <div className="p-4 bg-gradient-subtle rounded-lg border">
@@ -382,12 +385,12 @@ const CapstoneGenerator = () => {
               </div>
 
               {/* Chapter Controls */}
-              <div className="flex gap-2 mb-4">
-                <Button variant="outline" size="sm" onClick={expandAllChapters}>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Button variant="outline" size="sm" onClick={expandAllChapters} className="flex-1 sm:flex-none">
                   <ChevronDown className="h-4 w-4 mr-2" />
                   Expand All
                 </Button>
-                <Button variant="outline" size="sm" onClick={collapseAllChapters}>
+                <Button variant="outline" size="sm" onClick={collapseAllChapters} className="flex-1 sm:flex-none">
                   <ChevronRight className="h-4 w-4 mr-2" />
                   Collapse All
                 </Button>
@@ -401,21 +404,21 @@ const CapstoneGenerator = () => {
                     open={expandedChapters.includes(chapter.number)}
                     onOpenChange={() => toggleChapter(chapter.number)}
                   >
-                    <Card className="overflow-hidden hover:shadow-md transition-all duration-200">
+                    <Card className="overflow-hidden hover:shadow-md transition-all duration-200 touch-manipulation">
                       <CollapsibleTrigger asChild>
                         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                          <div className="flex items-start sm:items-center justify-between gap-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                              <Badge variant="secondary" className="bg-primary/10 text-primary self-start">
                                 Chapter {chapter.number}
                               </Badge>
-                              <CardTitle className="text-lg">{chapter.title}</CardTitle>
+                              <CardTitle className="text-base sm:text-lg leading-tight">{chapter.title}</CardTitle>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-emerald-500" />
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
                               {expandedChapters.includes(chapter.number) ? 
-                                <ChevronDown className="h-5 w-5" /> : 
-                                <ChevronRight className="h-5 w-5" />
+                                <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" /> : 
+                                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
                               }
                             </div>
                           </div>
@@ -430,11 +433,11 @@ const CapstoneGenerator = () => {
                           <Separator />
                           
                           {/* Chapter Overview */}
-                          <div className="grid md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Expected Length</span>
+                                <span className="font-medium text-sm sm:text-base">Expected Length</span>
                               </div>
                               <p className="text-sm text-muted-foreground pl-6">{chapter.expectedPages}</p>
                             </div>
@@ -494,8 +497,10 @@ const CapstoneGenerator = () => {
                 ))}
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </div>
         )}
+        </div>
       </div>
     </div>
   );
