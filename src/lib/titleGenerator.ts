@@ -219,43 +219,45 @@ Future research should explore emerging trends and their implications for busine
       }
     };
 
-    // Get field-specific content or use generic template
+    // Build section-specific content so every section is unique, then append field context
     const fieldContent = fieldSpecificContent[field as keyof typeof fieldSpecificContent];
     let content = '';
 
-    if (fieldContent && fieldContent[chapterNumber as keyof typeof fieldContent]) {
-      content = fieldContent[chapterNumber as keyof typeof fieldContent];
-    } else {
-      // Chapter-specific generic content generation that varies by chapter number and section
-      const baseLead = sectionOutline ? `${sectionOutline}\n\n` : '';
-      const approach = researchType ? ` using a ${researchType} approach` : '';
-      const introLine = `This ${sectionTitle.toLowerCase()} focuses on ${topic}${approach}.`;
+    // Section-aware generator (varies by chapter and section)
+    const baseLead = sectionOutline ? `${sectionOutline}\n\n` : '';
+    const approach = researchType ? ` using a ${researchType} approach` : '';
+    const introLine = `This ${sectionTitle.toLowerCase()} focuses on ${topic}${approach}.`;
 
-      switch (chapterNumber) {
-        case 1: // Introduction and Background
-          content = `${baseLead}${introLine}\n\nThis opening chapter establishes the research context and rationale for studying ${topic}. It clarifies the foundational concepts, situates the study within its real-world setting, and frames why the inquiry matters.\n\nIn the ${sectionTitle.toLowerCase()}, key elements are articulated: the context of the issue, the core gap to be addressed, and the expected contributions. The discussion aligns the research objectives and questions with the significance of the study and defines the scope and limitations to maintain a realistic and achievable investigation.`;
-          if (/statement of the problem/i.test(sectionTitle)) {
-            content += `\n\nStandard Operating Procedures (SOPs) applied to address the problem: (1) Problem Analysis SOP – identify, categorize, and prioritize root causes; (2) Solution Development SOP – design candidate interventions, evaluate feasibility, and plan pilots; (3) Implementation Monitoring SOP – track KPIs, gather feedback, and iterate improvements.`;
-          }
-          if (/scope and limitations/i.test(sectionTitle)) {
-            content += `\n\nTo manage constraints, the study enforces: (1) Scope Definition SOP – explicit inclusion/exclusion criteria and resource allocation; (2) Risk Mitigation SOP – early identification of risks with response plans; (3) Quality Assurance SOP – periodic checks for validity, reliability, and adherence to protocol.`;
-          }
-          break;
-        case 2: // Literature Review and Theoretical Framework
-          content = `${baseLead}${introLine}\n\nThis chapter synthesizes theories and prior studies relevant to ${topic}. It maps seminal works, competing viewpoints, and methodological patterns to build a clear theoretical and conceptual foundation.\n\nFor the ${sectionTitle.toLowerCase()}, emphasis is placed on tracing key constructs, comparing findings across sources, and identifying where knowledge converges or diverges. The section culminates in a precise research gap that justifies the present study.`;
-          break;
-        case 3: // Research Methodology and Design
-          content = `${baseLead}${introLine}\n\nThis chapter details the research design, population/sampling, instruments, procedures, and analysis techniques that ensure rigor and replicability. Choices are aligned with the research objectives and constraints.\n\nWithin the ${sectionTitle.toLowerCase()}, protocols are specified for data collection, operational definitions, instrument validation, and ethical safeguards. Analysis plans describe how data will be processed to answer each research question with appropriate statistics or qualitative techniques.`;
-          break;
-        case 4: // Results and Discussion
-          content = `${baseLead}${introLine}\n\nHere the study presents results derived from the collected data and interprets them in relation to the research questions, theory, and prior literature. Visualizations and tables support transparent reporting.\n\nIn the ${sectionTitle.toLowerCase()}, findings are explained for practical and theoretical significance, including effect sizes or thematic strength, limitations in inference, and comparisons with earlier studies. Implications highlight how stakeholders can use the results.`;
-          break;
-        case 5: // Conclusions and Recommendations
-          content = `${baseLead}${introLine}\n\nThe final chapter consolidates insights, states evidence-backed conclusions, and proposes actionable recommendations. It also clarifies the study's contributions and outlines promising directions for future work.\n\nFor the ${sectionTitle.toLowerCase()}, the narrative links conclusions to the data, prioritizes recommendations by feasibility and impact, and reflects on limitations encountered. Future research suggestions indicate how subsequent studies can extend or refine the present work.`;
-          break;
-        default:
-          content = `${baseLead}${introLine}\n\nThis section provides targeted analysis tailored to the chapter's objectives, ensuring clear alignment between ${sectionTitle.toLowerCase()} and the overarching investigation of ${topic}.`;
-      }
+    switch (chapterNumber) {
+      case 1: // Introduction and Background
+        content = `${baseLead}${introLine}\n\nThis opening chapter establishes the research context and rationale for studying ${topic}. It clarifies the foundational concepts, situates the study within its real-world setting, and frames why the inquiry matters.\n\nIn the ${sectionTitle.toLowerCase()}, key elements are articulated: the context of the issue, the core gap to be addressed, and the expected contributions. The discussion aligns the research objectives and questions with the significance of the study and defines the scope and limitations to maintain a realistic and achievable investigation.`;
+        if (/statement of the problem/i.test(sectionTitle)) {
+          content += `\n\nStandard Operating Procedures (SOPs) applied to address the problem: (1) Problem Analysis SOP – identify, categorize, and prioritize root causes; (2) Solution Development SOP – design candidate interventions, evaluate feasibility, and plan pilots; (3) Implementation Monitoring SOP – track KPIs, gather feedback, and iterate improvements.`;
+        }
+        if (/scope and limitations/i.test(sectionTitle)) {
+          content += `\n\nTo manage constraints, the study enforces: (1) Scope Definition SOP – explicit inclusion/exclusion criteria and resource allocation; (2) Risk Mitigation SOP – early identification of risks with response plans; (3) Quality Assurance SOP – periodic checks for validity, reliability, and adherence to protocol.`;
+        }
+        break;
+      case 2: // Literature Review and Theoretical Framework
+        content = `${baseLead}${introLine}\n\nThis chapter synthesizes theories and prior studies relevant to ${topic}. It maps seminal works, competing viewpoints, and methodological patterns to build a clear theoretical and conceptual foundation.\n\nFor the ${sectionTitle.toLowerCase()}, emphasis is placed on tracing key constructs, comparing findings across sources, and identifying where knowledge converges or diverges. The section culminates in a precise research gap that justifies the present study.`;
+        break;
+      case 3: // Research Methodology and Design
+        content = `${baseLead}${introLine}\n\nThis chapter details the research design, population/sampling, instruments, procedures, and analysis techniques that ensure rigor and replicability. Choices are aligned with the research objectives and constraints.\n\nWithin the ${sectionTitle.toLowerCase()}, protocols are specified for data collection, operational definitions, instrument validation, and ethical safeguards. Analysis plans describe how data will be processed to answer each research question with appropriate statistics or qualitative techniques.`;
+        break;
+      case 4: // Results and Discussion
+        content = `${baseLead}${introLine}\n\nHere the study presents results derived from the collected data and interprets them in relation to the research questions, theory, and prior literature. Visualizations and tables support transparent reporting.\n\nIn the ${sectionTitle.toLowerCase()}, findings are explained for practical and theoretical significance, including effect sizes or thematic strength, limitations in inference, and comparisons with earlier studies. Implications highlight how stakeholders can use the results.`;
+        break;
+      case 5: // Conclusions and Recommendations
+        content = `${baseLead}${introLine}\n\nThe final chapter consolidates insights, states evidence-backed conclusions, and proposes actionable recommendations. It also clarifies the study's contributions and outlines promising directions for future work.\n\nFor the ${sectionTitle.toLowerCase()}, the narrative links conclusions to the data, prioritizes recommendations by feasibility and impact, and reflects on limitations encountered. Future research suggestions indicate how subsequent studies can extend or refine the present work.`;
+        break;
+      default:
+        content = `${baseLead}${introLine}\n\nThis section provides targeted analysis tailored to the chapter's objectives, ensuring clear alignment between ${sectionTitle.toLowerCase()} and the overarching investigation of ${topic}.`;
+    }
+
+    // Append concise field-specific perspective
+    if (fieldTemplate) {
+      const methodology = fieldTemplate.methodologyFocus[Math.floor(Math.random() * fieldTemplate.methodologyFocus.length)];
+      content += `\n\nField-specific perspective: Emphasizes ${methodology.toLowerCase()} for ${topic} within the ${sectionTitle.toLowerCase()} context.`;
     }
 
     // Add keyword integration if available
