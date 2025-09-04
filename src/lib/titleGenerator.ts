@@ -69,11 +69,11 @@ const detailedChapterTemplates = {
     ],
     sections: [
       { title: 'Background of the Study', content: 'Provides contextual information about the research area and establishes the foundation for the investigation.' },
-      { title: 'Statement of the Problem', content: 'Clearly articulates the specific problem or gap that the research addresses.' },
+      { title: 'Statement of the Problem', content: 'Clearly articulates the specific problem or gap that the research addresses. Includes three Standard Operating Procedures (SOPs) to systematically solve the identified issues: 1) Problem Analysis SOP - systematic identification and documentation of root causes; 2) Solution Development SOP - structured approach to developing evidence-based solutions; 3) Implementation Monitoring SOP - continuous assessment and adjustment protocols.' },
       { title: 'Research Objectives', content: 'Lists the primary and secondary objectives that guide the research investigation.' },
       { title: 'Research Questions', content: 'Formulates specific questions that the study aims to answer through systematic investigation.' },
       { title: 'Significance of the Study', content: 'Explains the importance and potential impact of the research findings.' },
-      { title: 'Scope and Limitations', content: 'Defines the boundaries of the study and acknowledges inherent constraints.' }
+      { title: 'Scope and Limitations', content: 'Defines the boundaries of the study and acknowledges inherent constraints. Includes three Standard Operating Procedures (SOPs) to address limitations: 1) Scope Definition SOP - systematic boundary setting and resource allocation protocols; 2) Risk Mitigation SOP - proactive identification and management of potential study constraints; 3) Quality Assurance SOP - continuous monitoring and validation procedures to maintain research integrity within defined limitations.' }
     ],
     expectedPages: '15-25 pages',
     keyComponents: ['Problem identification', 'Research rationale', 'Conceptual framework', 'Thesis statement']
