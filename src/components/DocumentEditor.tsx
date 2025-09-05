@@ -137,12 +137,7 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
   const exportDocument = async () => {
     try {
       const doc = await generateWordDocument();
-      const buffer = await Packer.toBuffer(doc);
-      
-      // Create blob with explicit Word document MIME type
-      const blob = new Blob([buffer], { 
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-      });
+      const blob = await Packer.toBlob(doc);
       
       // Force download as .docx file
       const url = URL.createObjectURL(blob);
