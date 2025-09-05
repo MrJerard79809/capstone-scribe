@@ -19,6 +19,7 @@ import {
   Check
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 
 interface DocumentChapter {
   number: number;
@@ -133,42 +134,188 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
     });
   };
 
-  const exportDocument = () => {
-    const content = generateExportContent();
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${documentTitle.replace(/[^a-z0-9]/gi, '_')}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Document Exported",
-      description: "Your capstone document has been downloaded."
-    });
+  const exportDocument = async () => {
+    try {
+      const doc = await generateWordDocument();
+      const buffer = await Packer.toBuffer(doc);
+      const blob = new Blob([buffer], { 
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${documentTitle.replace(/[^a-z0-9]/gi, '_')}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Document Exported",
+        description: "Your capstone document has been downloaded as Word document."
+      });
+    } catch (error) {
+      toast({
+        title: "Export Error",
+        description: "Failed to export document. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const generateExportContent = () => {
-    let content = `${documentTitle}\n${'='.repeat(documentTitle.length)}\n\n`;
-    
-    chapters.forEach(chapter => {
-      content += `CHAPTER ${chapter.number}: ${chapter.title.toUpperCase()}\n`;
-      content += `${'='.repeat(50)}\n\n`;
+  const generateWordDocument = async () => {
+    const children = [
+      // Document Title
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: documentTitle,
+            bold: true,
+            size: 32,
+          }),
+        ],
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 400 },
+      }),
       
-      content += `${chapter.content.introduction}\n\n`;
-      
-      chapter.content.sections.forEach(section => {
-        content += `${section.title}\n`;
-        content += `${'-'.repeat(section.title.length)}\n`;
-        content += `${section.content}\n\n`;
+      // Add page break before chapters
+      new Paragraph({
+        children: [new TextRun({ text: "", break: 1 })],
+        pageBreakBefore: true,
+      }),
+    ];
+
+    // Add each chapter
+    chapters.forEach((chapter, chapterIndex) => {
+      // Chapter title
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `CHAPTER ${chapter.number}: ${chapter.title.toUpperCase()}`,
+              bold: true,
+              size: 24,
+            }),
+          ],
+          heading: HeadingLevel.HEADING_1,
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 400, after: 200 },
+        })
+      );
+
+      // Chapter introduction
+      if (chapter.content.introduction) {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Introduction",
+                bold: true,
+                size: 20,
+              }),
+            ],
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 100 },
+          })
+        );
+
+        // Split introduction into paragraphs
+        const introParagraphs = chapter.content.introduction.split('\n\n');
+        introParagraphs.forEach(para => {
+          if (para.trim()) {
+            children.push(
+              new Paragraph({
+                children: [new TextRun({ text: para.trim(), size: 24 })],
+                spacing: { after: 200 },
+                alignment: AlignmentType.JUSTIFIED,
+              })
+            );
+          }
+        });
+      }
+
+      // Chapter sections
+      chapter.content.sections.forEach((section, sectionIndex) => {
+        if (section.title && section.content) {
+          // Section title
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: section.title,
+                  bold: true,
+                  size: 20,
+                }),
+              ],
+              heading: HeadingLevel.HEADING_2,
+              spacing: { before: 200, after: 100 },
+            })
+          );
+
+          // Section content
+          const sectionParagraphs = section.content.split('\n\n');
+          sectionParagraphs.forEach(para => {
+            if (para.trim()) {
+              children.push(
+                new Paragraph({
+                  children: [new TextRun({ text: para.trim(), size: 24 })],
+                  spacing: { after: 200 },
+                  alignment: AlignmentType.JUSTIFIED,
+                })
+              );
+            }
+          });
+        }
       });
-      
-      content += `${chapter.content.conclusion}\n\n`;
-      content += `\n${'='.repeat(50)}\n\n`;
+
+      // Chapter conclusion
+      if (chapter.content.conclusion) {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Conclusion",
+                bold: true,
+                size: 20,
+              }),
+            ],
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 100 },
+          })
+        );
+
+        const conclusionParagraphs = chapter.content.conclusion.split('\n\n');
+        conclusionParagraphs.forEach(para => {
+          if (para.trim()) {
+            children.push(
+              new Paragraph({
+                children: [new TextRun({ text: para.trim(), size: 24 })],
+                spacing: { after: 200 },
+                alignment: AlignmentType.JUSTIFIED,
+              })
+            );
+          }
+        });
+      }
+
+      // Add page break between chapters (except for the last one)
+      if (chapterIndex < chapters.length - 1) {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: "", break: 1 })],
+            pageBreakBefore: true,
+          })
+        );
+      }
     });
-    
-    return content;
+
+    return new Document({
+      sections: [
+        {
+          properties: {},
+          children,
+        },
+      ],
+    });
   };
 
   const currentChapter = chapters.find(c => c.number === activeChapter);
