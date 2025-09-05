@@ -138,21 +138,30 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
     try {
       const doc = await generateWordDocument();
       const buffer = await Packer.toBuffer(doc);
+      
+      // Create blob with explicit Word document MIME type
       const blob = new Blob([buffer], { 
         type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
       });
+      
+      // Force download as .docx file
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${documentTitle.replace(/[^a-z0-9]/gi, '_')}.docx`;
-      a.click();
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${documentTitle.replace(/[^a-z0-9\s]/gi, '_').replace(/\s+/g, '_')}.docx`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
       toast({
         title: "Document Exported",
-        description: "Your capstone document has been downloaded as Word document."
+        description: "Your capstone document has been downloaded as a Word (.docx) file."
       });
     } catch (error) {
+      console.error('Export error:', error);
       toast({
         title: "Export Error",
         description: "Failed to export document. Please try again.",
