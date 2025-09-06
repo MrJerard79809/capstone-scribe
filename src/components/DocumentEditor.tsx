@@ -602,6 +602,15 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
                       chapterNumber={activeChapter}
                       chapterTitle={currentChapter.title}
                       currentContent={currentChapter.content}
+                      onContentGenerated={(sectionType, content, sectionIndex) => {
+                        if (sectionType === 'introduction') {
+                          updateChapterContent(activeChapter, 'introduction', content);
+                        } else if (sectionType === 'conclusion') {
+                          updateChapterContent(activeChapter, 'conclusion', content);
+                        } else if (sectionType === 'section' && sectionIndex !== undefined) {
+                          updateSectionContent(activeChapter, sectionIndex, 'content', content);
+                        }
+                      }}
                     />
                   )}
                 </div>

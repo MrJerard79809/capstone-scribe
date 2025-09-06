@@ -488,12 +488,31 @@ What would you like me to help you write?`;
                         className="mt-2 text-xs h-6"
                         onClick={() => {
                           // Extract the generated content (everything before the apply instruction)
-                          const content = message.content.split('*Click "Apply Content"')[0].trim();
-                          // For now, copy to clipboard - in real implementation, this would apply to document
-                          navigator.clipboard.writeText(content);
+                          const generatedText = message.content.split('*Click "Apply Content"')[0].trim();
+                          
+                          // Clean up the content by removing markdown formatting
+                          let cleanContent = generatedText
+                            .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove **bold** formatting
+                            .replace(/^\*\*Generated [^:]+:\*\*\s*/gm, '') // Remove "Generated X:" headers
+                            .trim();
+
+                          // Determine what type of content this is and where to apply it
+                          const content = message.content.toLowerCase();
+                          
+                          if (content.includes('problem statement') || content.includes('background') || content.includes('research questions') || content.includes('research objectives')) {
+                            // Apply to introduction section
+                            onContentGenerated?.('introduction', cleanContent);
+                          } else if (content.includes('conclusion') || content.includes('summary')) {
+                            // Apply to conclusion section  
+                            onContentGenerated?.('conclusion', cleanContent);
+                          } else {
+                            // Apply to first section content
+                            onContentGenerated?.('section', cleanContent, 0);
+                          }
+                          
                           toast({
-                            title: "Content Copied",
-                            description: "Generated content copied to clipboard. You can paste it into your document."
+                            title: "Content Applied",
+                            description: "Generated content has been added to your document."
                           });
                         }}
                       >
