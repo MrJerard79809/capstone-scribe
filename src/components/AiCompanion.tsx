@@ -33,10 +33,10 @@ interface AiCompanionProps {
     sections: { title: string; content: string; }[];
     conclusion: string;
   };
-  onSuggestionApply?: (section: string, content: string) => void;
+  onContentGenerated?: (sectionType: 'introduction' | 'section' | 'conclusion', content: string, sectionIndex?: number) => void;
 }
 
-const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onSuggestionApply }: AiCompanionProps) => {
+const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGenerated }: AiCompanionProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -75,34 +75,34 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onSuggestion
   const getChapterSuggestions = () => {
     const suggestions = {
       1: [
-        "Help me write a problem statement",
-        "Suggest research objectives", 
-        "Guide me with background context",
-        "Help with research questions"
+        "Generate a problem statement",
+        "Write research objectives", 
+        "Create background section",
+        "Draft research questions"
       ],
       2: [
-        "Organize my literature themes",
-        "Help identify research gaps",
-        "Structure theoretical framework",
-        "Suggest citation strategies"
+        "Generate literature themes",
+        "Write gap analysis",
+        "Create theoretical framework",
+        "Draft literature summary"
       ],
       3: [
-        "Choose research methodology",
-        "Design data collection plan",
-        "Select appropriate sample size",
-        "Address ethical considerations"
+        "Write methodology section",
+        "Create data collection plan",
+        "Generate ethical considerations",
+        "Draft sample description"
       ],
       4: [
-        "Analyze my findings",
-        "Create result interpretations",
-        "Link results to objectives",
-        "Discuss implications"
+        "Generate results summary",
+        "Create data analysis",
+        "Write findings discussion",
+        "Draft implications section"
       ],
       5: [
-        "Summarize key findings",
-        "Write strong conclusions",
-        "Develop recommendations",
-        "Identify limitations"
+        "Generate conclusion summary",
+        "Write recommendations",
+        "Create limitations section",
+        "Draft future research"
       ]
     };
 
@@ -110,155 +110,255 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onSuggestion
   };
 
   const generateAiResponse = async (userMessage: string): Promise<string> => {
-    // Simulate AI response based on chapter and user input
-    const responses: Record<number, Record<string, string>> = {
+    const lowercaseInput = userMessage.toLowerCase();
+    
+    // Generate actual content based on the chapter and request
+    const contentGenerators: Record<number, Record<string, () => string>> = {
       1: {
-        "problem statement": `For your problem statement, consider these elements:
-1. What specific issue are you addressing?
-2. Why is this problem important?
-3. What gap exists in current knowledge/practice?
-4. How will your research contribute to solving this problem?
+        "problem statement": () => `**Generated Problem Statement:**
 
-Example structure: "Despite [current situation], there remains [specific gap] which leads to [consequences]. This research addresses [problem] by [your approach].`,
-        
-        "research objectives": `Research objectives should be SMART (Specific, Measurable, Achievable, Relevant, Time-bound). Consider:
-1. General objective: Overall aim of your study
-2. Specific objectives: 3-5 detailed goals that support the general objective
+Despite significant advancements in ${chapterTitle.toLowerCase()}, there remains a critical gap in understanding how current approaches address the evolving challenges in this field. This gap has resulted in limited practical solutions and theoretical frameworks that adequately address the complex nature of the problem.
 
-Format: "To [action verb] [what] [how] [why]"
-Example: "To examine the effectiveness of digital marketing strategies on customer engagement in small businesses."`,
+This research addresses the need for a comprehensive analysis of ${chapterTitle.toLowerCase()} by examining current practices, identifying key challenges, and proposing evidence-based solutions that can enhance both theoretical understanding and practical applications in the field.
 
-        "background": `Your background section should:
-1. Start broad, then narrow to your specific topic
-2. Establish the importance of your research area
-3. Provide context for your research problem
-4. Connect to existing knowledge in the field
+*Click "Apply Content" to add this to your document.*`,
 
-Structure: General context → Specific area → Your focus → Research gap`,
+        "research objectives": () => `**Generated Research Objectives:**
 
-        "research questions": `Good research questions are:
-1. Clear and focused
-2. Researchable within your timeframe
-3. Aligned with your objectives
-4. Open-ended (not yes/no)
+**General Objective:**
+To investigate and analyze the current state of ${chapterTitle.toLowerCase()} and develop evidence-based recommendations for improvement.
 
-Types: Descriptive ("What is...?"), Comparative ("How does X compare to Y?"), Relationship ("What is the relationship between X and Y?")`
+**Specific Objectives:**
+1. To examine the current practices and approaches in ${chapterTitle.toLowerCase()}
+2. To identify key challenges and limitations in existing methodologies
+3. To analyze the effectiveness of current solutions and interventions
+4. To develop practical recommendations for enhancing outcomes
+5. To contribute to the theoretical understanding of the field
+
+*Click "Apply Content" to add these objectives to your document.*`,
+
+        "background": () => `**Generated Background Section:**
+
+The field of ${chapterTitle.toLowerCase()} has experienced significant evolution over the past decade, driven by technological advancements, changing societal needs, and emerging research findings. Understanding the historical context and current landscape is essential for identifying areas that require further investigation.
+
+Recent studies have highlighted several key trends in this area, including the increasing complexity of challenges, the need for interdisciplinary approaches, and the growing importance of evidence-based solutions. However, despite these advances, significant gaps remain in our understanding of how to effectively address the multifaceted nature of the problems encountered in this field.
+
+The importance of this research lies in its potential to bridge existing gaps between theory and practice, providing valuable insights that can inform future policy, practice, and research directions.
+
+*Click "Apply Content" to add this background to your document.*`,
+
+        "research questions": () => `**Generated Research Questions:**
+
+**Primary Research Question:**
+How can current approaches to ${chapterTitle.toLowerCase()} be enhanced to better address contemporary challenges and improve outcomes?
+
+**Secondary Research Questions:**
+1. What are the key factors that influence success in current practices?
+2. What barriers exist that limit the effectiveness of existing approaches?
+3. How do stakeholders perceive the current state of practice in this field?
+4. What evidence-based strategies show the most promise for improvement?
+5. How can theoretical frameworks be better aligned with practical applications?
+
+*Click "Apply Content" to add these research questions to your document.*`
       },
-      
+
       2: {
-        "literature themes": `Organize your literature by themes, not chronologically. Common themes might be:
-1. Theoretical foundations
-2. Methodological approaches
-3. Key findings and trends
-4. Contradictions or debates
-5. Gaps and limitations
+        "literature themes": () => `**Generated Literature Review Themes:**
 
-Create a literature matrix with: Author, Year, Key findings, Methodology, Relevance to your study`,
+**Theme 1: Theoretical Foundations**
+The literature reveals several key theoretical frameworks that underpin current understanding of ${chapterTitle.toLowerCase()}. These include [relevant theories] which provide the conceptual foundation for this field of study.
 
-        "research gaps": `Identify gaps by looking for:
-1. Understudied populations or contexts
-2. Methodological limitations in existing studies
-3. Contradictory findings that need resolution
-4. New perspectives or theoretical approaches
-5. Practical applications not yet explored
+**Theme 2: Methodological Approaches**
+Research in this area has employed diverse methodological approaches, ranging from quantitative surveys to qualitative case studies. The literature shows a trend toward mixed-methods approaches that capitalize on the strengths of both paradigms.
 
-Frame gaps as opportunities for your contribution.`,
+**Theme 3: Key Findings and Patterns**
+Across multiple studies, consistent patterns emerge regarding the factors that influence success and the challenges that persist in this field. These findings provide important insights for future research and practice.
 
-        "theoretical framework": `Your theoretical framework should:
-1. Define key concepts and variables
-2. Explain relationships between concepts
-3. Provide lens for data interpretation
-4. Connect to your research questions
+**Theme 4: Gaps and Contradictions**
+While the literature provides valuable insights, several gaps and contradictions exist that warrant further investigation. These areas represent opportunities for meaningful contribution to the field.
 
-Include: Main theory/model, supporting theories, visual representation (diagram/model)`
+*Click "Apply Content" to add these themes to your document.*`,
+
+        "gap analysis": () => `**Generated Gap Analysis:**
+
+**Identified Research Gaps:**
+
+1. **Methodological Gaps:** Limited longitudinal studies examining the long-term effects of interventions in ${chapterTitle.toLowerCase()}.
+
+2. **Population Gaps:** Insufficient research focusing on diverse populations and contexts, particularly underrepresented groups.
+
+3. **Theoretical Gaps:** Lack of comprehensive theoretical frameworks that integrate multiple perspectives and approaches.
+
+4. **Practical Gaps:** Limited research on the translation of theoretical findings into practical applications and real-world implementations.
+
+5. **Measurement Gaps:** Absence of standardized assessment tools and outcome measures specific to this field.
+
+**Opportunities for Contribution:**
+This study addresses these gaps by providing [specific contributions your research will make], thereby advancing both theoretical understanding and practical applications in the field.
+
+*Click "Apply Content" to add this gap analysis to your document.*`
       },
 
       3: {
-        "methodology": `Choose methodology based on:
-1. Your research questions (What do you want to know?)
-2. Nature of your topic (Quantitative/Qualitative/Mixed)
-3. Available resources and time
-4. Access to participants/data
+        "methodology": () => `**Generated Methodology Section:**
 
-Justify why your chosen approach is most appropriate for answering your research questions.`,
+**Research Design:**
+This study employs a [mixed-methods/quantitative/qualitative] research design to comprehensively investigate ${chapterTitle.toLowerCase()}. This approach was selected because it allows for both breadth and depth of understanding while addressing the research objectives effectively.
 
-        "data collection": `Design your data collection plan:
-1. What data do you need?
-2. How will you collect it? (surveys, interviews, observations)
-3. Who are your participants?
-4. When and where will you collect data?
-5. What tools/instruments will you use?
+**Research Approach:**
+The research follows a [descriptive/exploratory/explanatory] approach, enabling systematic investigation of the research questions while maintaining flexibility to explore emerging themes and patterns.
 
-Consider validity, reliability, and ethical requirements.`,
+**Justification:**
+This methodological approach is most appropriate for this study because it:
+- Aligns with the research objectives and questions
+- Allows for comprehensive data collection and analysis
+- Provides both statistical significance and contextual understanding
+- Enables triangulation of findings for enhanced validity
 
-        "sample": `Sample size depends on:
-1. Research design (qualitative: 8-15 for interviews, quantitative: statistical power analysis)
-2. Population characteristics
-3. Available resources
-4. Saturation point (qualitative)
+**Data Collection Strategy:**
+Data will be collected through multiple sources to ensure comprehensive coverage of the research topic and enhance the reliability of findings.
 
-Justify your sample size and selection method.`
+*Click "Apply Content" to add this methodology to your document.*`,
+
+        "data collection": () => `**Generated Data Collection Plan:**
+
+**Data Collection Methods:**
+
+1. **Primary Data Collection:**
+   - Surveys: Structured questionnaires to gather quantitative data from participants
+   - Interviews: Semi-structured interviews to explore experiences and perspectives in depth
+   - Observations: Systematic observation of practices and behaviors in natural settings
+
+2. **Secondary Data Collection:**
+   - Document analysis: Review of relevant reports, policies, and organizational documents
+   - Literature review: Systematic analysis of existing research and publications
+   - Archival data: Historical records and databases relevant to the study
+
+**Data Collection Timeline:**
+- Phase 1 (Months 1-2): Secondary data collection and literature review
+- Phase 2 (Months 3-4): Survey data collection
+- Phase 3 (Months 5-6): Interview data collection
+- Phase 4 (Months 7-8): Data analysis and interpretation
+
+**Quality Assurance:**
+All data collection procedures will follow established protocols to ensure reliability, validity, and ethical compliance.
+
+*Click "Apply Content" to add this data collection plan to your document.*`
       },
 
       4: {
-        "findings": `Present findings systematically:
-1. Organize by research questions/objectives
-2. Use clear headings and subheadings
-3. Include relevant data (tables, figures, quotes)
-4. Describe patterns and trends
-5. Highlight key insights
+        "results summary": () => `**Generated Results Summary:**
 
-Let the data speak - interpret in discussion section.`,
+**Overview of Findings:**
+The data analysis revealed several significant findings related to ${chapterTitle.toLowerCase()}. The results are organized according to the research objectives and questions, providing a systematic presentation of the key discoveries.
 
-        "interpretations": `Interpret results by:
-1. Explaining what findings mean
-2. Connecting to existing literature
-3. Addressing research questions
-4. Discussing unexpected findings
-5. Considering alternative explanations
+**Key Findings:**
 
-Support interpretations with evidence from your data.`
+1. **Primary Finding:** The analysis indicates that [describe main finding based on your research focus]
+
+2. **Supporting Findings:** 
+   - Participants demonstrated significant variation in [relevant aspect]
+   - Strong correlations were found between [relevant variables]
+   - Qualitative themes emerged around [key themes]
+
+3. **Unexpected Findings:** 
+   The data revealed some unexpected patterns, particularly regarding [describe unexpected results]
+
+**Statistical Significance:**
+The results show statistically significant relationships (p < 0.05) between key variables, supporting the research hypotheses and providing confidence in the findings.
+
+**Summary:**
+These findings contribute to our understanding of ${chapterTitle.toLowerCase()} and provide evidence for the recommendations presented in the following sections.
+
+*Click "Apply Content" to add this results summary to your document.*`,
+
+        "data analysis": () => `**Generated Data Analysis Section:**
+
+**Analytical Approach:**
+The data analysis followed a systematic approach designed to address each research objective comprehensively. Both quantitative and qualitative analytical techniques were employed to maximize the insights gained from the collected data.
+
+**Quantitative Analysis:**
+- Descriptive statistics were calculated to summarize participant characteristics and key variables
+- Inferential statistics (t-tests, ANOVA, correlation analysis) were used to test hypotheses
+- Effect sizes were calculated to determine the practical significance of findings
+
+**Qualitative Analysis:**
+- Thematic analysis was conducted to identify patterns and themes in interview data
+- Coding procedures followed established qualitative research protocols
+- Member checking was employed to enhance the credibility of interpretations
+
+**Data Integration:**
+The quantitative and qualitative findings were integrated through a convergent parallel design, allowing for triangulation of results and enhanced understanding of the research topic.
+
+**Validation Procedures:**
+Multiple validation strategies were employed including peer debriefing, member checking, and triangulation to ensure the trustworthiness of the findings.
+
+*Click "Apply Content" to add this data analysis section to your document.*`
       },
 
       5: {
-        "conclusions": `Strong conclusions should:
-1. Directly answer research questions
-2. Summarize key findings concisely
-3. Demonstrate achievement of objectives
-4. Avoid introducing new information
-5. Connect back to problem statement
+        "conclusion summary": () => `**Generated Conclusion Summary:**
 
-Format: Research question → Key finding → Conclusion`,
+**Research Summary:**
+This study investigated ${chapterTitle.toLowerCase()} through a comprehensive research approach that addressed the identified gaps in existing literature. The research successfully achieved its objectives and provided valuable insights into the field.
 
-        "recommendations": `Develop recommendations for:
-1. Practice/Implementation
-2. Policy (if applicable)
-3. Future research
-4. Theory development
+**Key Contributions:**
+1. **Theoretical Contribution:** The study provides new theoretical insights that enhance understanding of [relevant concepts]
+2. **Methodological Contribution:** The research methodology offers a framework for future studies in this area
+3. **Practical Contribution:** The findings provide evidence-based recommendations for practitioners and policymakers
 
-Make recommendations specific, actionable, and evidence-based from your findings.`
+**Research Questions Addressed:**
+Each research question was systematically addressed through the data collection and analysis process:
+- The primary research question was answered through [summarize key finding]
+- Secondary questions provided additional insights into [supporting findings]
+
+**Significance of Findings:**
+The results of this study are significant because they [explain the importance and implications of your findings for the field].
+
+*Click "Apply Content" to add this conclusion summary to your document.*`,
+
+        "recommendations": () => `**Generated Recommendations:**
+
+Based on the findings of this research, the following recommendations are proposed:
+
+**Recommendations for Practice:**
+1. **Implementation Recommendation:** Practitioners should consider adopting [specific practice] based on the evidence that it [explain benefit]
+2. **Training Recommendation:** Professional development programs should incorporate [specific training elements] to enhance effectiveness
+3. **Policy Recommendation:** Organizations should develop policies that support [specific policy area] to improve outcomes
+
+**Recommendations for Future Research:**
+1. **Longitudinal Studies:** Future research should examine the long-term effects of the interventions identified in this study
+2. **Comparative Studies:** Research comparing different approaches to ${chapterTitle.toLowerCase()} would provide valuable insights
+3. **Diverse Populations:** Studies involving diverse populations and contexts would enhance the generalizability of findings
+
+**Implementation Considerations:**
+- Resource requirements and feasibility should be considered when implementing recommendations
+- Stakeholder engagement is crucial for successful implementation
+- Monitoring and evaluation systems should be established to assess effectiveness
+
+*Click "Apply Content" to add these recommendations to your document.*`
       }
     };
 
-    const chapterResponses = responses[chapterNumber as keyof typeof responses] || {};
-    
-    // Find matching response based on keywords
-    const lowercaseInput = userMessage.toLowerCase();
-    for (const [key, response] of Object.entries(chapterResponses)) {
-      if (lowercaseInput.includes(key)) {
-        return response;
+    // Check if this is a content generation request
+    const generators = contentGenerators[chapterNumber] || {};
+    for (const [key, generator] of Object.entries(generators)) {
+      if (lowercaseInput.includes(key.split(' ')[0])) { // Match on first word (generate, write, create, draft)
+        return generator();
       }
     }
 
-    // Generic helpful response
-    return `I understand you need help with "${userMessage}". Based on your current content in Chapter ${chapterNumber}, here are some suggestions:
+    // If not a specific content generation request, provide guidance
+    return `I can help you generate specific content for Chapter ${chapterNumber}. Try asking me to:
 
-1. Review your current section structure - does it flow logically?
-2. Ensure each section supports your main chapter objective
-3. Consider if you need more detail or examples
-4. Check that your content aligns with academic writing standards
+• "Generate a problem statement"
+• "Write research objectives" 
+• "Create a background section"
+• "Draft research questions"
 
-Would you like me to provide more specific guidance for any particular aspect of Chapter ${chapterNumber}?`;
+Or describe what specific content you need, and I'll create it for you to review and apply to your document.
+
+What would you like me to help you write?`;
   };
 
   const handleSendMessage = async () => {
@@ -381,6 +481,25 @@ Would you like me to provide more specific guidance for any particular aspect of
                     }`}
                   >
                     <div className="whitespace-pre-wrap">{message.content}</div>
+                    {message.type === 'ai' && message.content.includes('*Click "Apply Content"*') && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2 text-xs h-6"
+                        onClick={() => {
+                          // Extract the generated content (everything before the apply instruction)
+                          const content = message.content.split('*Click "Apply Content"')[0].trim();
+                          // For now, copy to clipboard - in real implementation, this would apply to document
+                          navigator.clipboard.writeText(content);
+                          toast({
+                            title: "Content Copied",
+                            description: "Generated content copied to clipboard. You can paste it into your document."
+                          });
+                        }}
+                      >
+                        Apply Content
+                      </Button>
+                    )}
                     <div className="text-xs opacity-70 mt-1">
                       {message.timestamp.toLocaleTimeString()}
                     </div>
