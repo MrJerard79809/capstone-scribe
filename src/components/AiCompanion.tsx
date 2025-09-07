@@ -481,7 +481,7 @@ What would you like me to help you write?`;
                     }`}
                   >
                     <div className="whitespace-pre-wrap">{message.content}</div>
-                    {message.type === 'ai' && message.content.includes('*Click "Apply Content"*') && (
+                    {message.type === 'ai' && message.content.includes('Apply Content') && (
                       <Button
                         size="sm"
                         variant="outline"
