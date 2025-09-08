@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Bot, 
   Send, 
@@ -41,6 +42,8 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGen
   const [input, setInput] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showApplyDialog, setShowApplyDialog] = useState(false);
+  const [pendingContent, setPendingContent] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -496,24 +499,8 @@ What would you like me to help you write?`;
                             .replace(/^\*\*Generated [^:]+:\*\*\s*/gm, '') // Remove "Generated X:" headers
                             .trim();
 
-                          // Determine what type of content this is and where to apply it
-                          const content = message.content.toLowerCase();
-                          
-                          if (content.includes('problem statement') || content.includes('background') || content.includes('research questions') || content.includes('research objectives')) {
-                            // Apply to introduction section
-                            onContentGenerated?.('introduction', cleanContent);
-                          } else if (content.includes('conclusion') || content.includes('summary')) {
-                            // Apply to conclusion section  
-                            onContentGenerated?.('conclusion', cleanContent);
-                          } else {
-                            // Apply to first section content
-                            onContentGenerated?.('section', cleanContent, 0);
-                          }
-                          
-                          toast({
-                            title: "Content Applied",
-                            description: "Generated content has been added to your document."
-                          });
+                          setPendingContent(cleanContent);
+                          setShowApplyDialog(true);
                         }}
                       >
                         Apply Content
@@ -561,6 +548,65 @@ What would you like me to help you write?`;
           </div>
         </CardContent>
       )}
+
+      {/* Apply Content Dialog */}
+      <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Where would you like to apply this content?</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-3">
+            <Button
+              onClick={() => {
+                onContentGenerated?.('introduction', pendingContent);
+                setShowApplyDialog(false);
+                toast({
+                  title: "Content Applied",
+                  description: "Content added to Introduction section."
+                });
+              }}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              Introduction Section
+            </Button>
+            
+            {currentContent.sections.map((section, index) => (
+              <Button
+                key={index}
+                onClick={() => {
+                  onContentGenerated?.('section', pendingContent, index);
+                  setShowApplyDialog(false);
+                  toast({
+                    title: "Content Applied",
+                    description: `Content added to ${section.title || `Section ${index + 1}`}.`
+                  });
+                }}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                {section.title || `Section ${index + 1}`}
+              </Button>
+            ))}
+            
+            <Button
+              onClick={() => {
+                onContentGenerated?.('conclusion', pendingContent);
+                setShowApplyDialog(false);
+                toast({
+                  title: "Content Applied",
+                  description: "Content added to Conclusion section."
+                });
+              }}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              Conclusion Section
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </Card>
   );
 };
