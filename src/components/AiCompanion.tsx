@@ -47,6 +47,11 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGen
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  // Clean special characters from AI responses
+  const cleanText = (text: string) => {
+    return text.replace(/[*#_~`]/g, '');
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -387,7 +392,7 @@ What would you like me to help you write?`;
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: aiResponse,
+        content: cleanText(aiResponse),
         timestamp: new Date()
       };
 
