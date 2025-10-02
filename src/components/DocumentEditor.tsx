@@ -60,12 +60,12 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
       number: chapter.number,
       title: chapter.title,
       content: {
-        introduction: generateIntroductionText(chapter),
+        introduction: cleanText(generateIntroductionText(chapter)),
         sections: chapter.sections.map((section: any) => ({
           title: section.title,
-          content: generateSectionContent(chapter.number, section.title)
+          content: cleanText(generateSectionContent(chapter.number, section.title))
         })),
-        conclusion: generateConclusionText(chapter.number)
+        conclusion: cleanText(generateConclusionText(chapter.number))
       },
       wordCount: 0,
       lastEdited: new Date()
@@ -93,6 +93,11 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
       5: `This concluding chapter has synthesized the key findings of the research, drawn evidence-based conclusions, provided practical recommendations, and discussed the implications for theory and practice. While limitations exist, this study makes significant contributions to the field and opens avenues for future research in this important area.`
     };
     return conclusions[chapterNumber as keyof typeof conclusions] || `This chapter concludes the discussion on ${chapterNumber === 1 ? 'the introduction' : chapterNumber === 2 ? 'the literature review' : chapterNumber === 3 ? 'the methodology' : chapterNumber === 4 ? 'the results' : 'the study'}.`;
+  };
+
+  // Clean special characters from generated content
+  const cleanText = (text: string) => {
+    return text.replace(/[*#_~`]/g, '');
   };
 
   const generateSectionContent = (chapterNumber: number, sectionTitle: string) => {
