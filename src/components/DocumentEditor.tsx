@@ -429,14 +429,25 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       {/* Mobile Header */}
-      <div className="lg:hidden border-b bg-card p-4">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Menu className="h-5 w-5" />
-          </Button>
-          <h2 className="font-semibold truncate mx-4 flex-1">{documentTitle}</h2>
-          <Button variant="ghost" size="sm" onClick={onBack}>
+      <div className="lg:hidden border-b bg-card p-3 sticky top-0 z-40">
+        <div className="flex items-center justify-between gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onBack}
+            className="flex items-center gap-1 shrink-0"
+          >
             <ChevronLeft className="h-5 w-5" />
+            <span className="text-sm">Back</span>
+          </Button>
+          <h2 className="font-semibold truncate text-sm flex-1 text-center">{documentTitle}</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="shrink-0"
+          >
+            <Menu className="h-5 w-5" />
           </Button>
         </div>
       </div>
