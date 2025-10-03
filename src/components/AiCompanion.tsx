@@ -453,50 +453,51 @@ What would you like me to help you write?`;
       </CardHeader>
 
       {isExpanded && (
-        <CardContent className="flex flex-col h-[calc(85vh-3.5rem)] sm:h-[500px] p-3 sm:p-4 pt-0">
-          {/* Quick Suggestions */}
-          <div className="mb-3 sm:mb-4">
-            <p className="text-[10px] sm:text-xs font-medium mb-1.5 sm:mb-2 text-muted-foreground">Quick Help:</p>
-            <div className="flex flex-wrap gap-1">
-              {getChapterSuggestions().slice(0, 2).map((suggestion, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="text-[10px] sm:text-xs h-6 sm:h-7 px-1.5 sm:px-2"
-                  onClick={() => applySuggestion(suggestion)}
-                >
-                  <Lightbulb className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                  <span className="truncate">{suggestion}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          <Separator className="mb-3 sm:mb-4" />
-
-          {/* Messages */}
-          <ScrollArea className="flex-1 pr-2 sm:pr-4">
-            <div className="space-y-2 sm:space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[90%] sm:max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
-                      message.type === 'user'
-                        ? 'bg-primary text-primary-foreground ml-2 sm:ml-4'
-                        : 'bg-muted mr-2 sm:mr-4'
-                    }`}
+        <CardContent className="flex flex-col p-0">
+          <div className="flex flex-col h-[calc(85vh-4rem)] sm:h-[540px]">
+            {/* Quick Suggestions */}
+            <div className="px-3 sm:px-4 pt-2 sm:pt-3 pb-2">
+              <p className="text-[10px] sm:text-xs font-medium mb-1.5 text-muted-foreground">Quick Help:</p>
+              <div className="flex flex-wrap gap-1.5">
+                {getChapterSuggestions().slice(0, 2).map((suggestion, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="text-[10px] sm:text-xs h-7 px-2"
+                    onClick={() => applySuggestion(suggestion)}
                   >
-                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
-                    {message.type === 'ai' && message.content.includes('Apply Content') && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs h-6 sm:h-7 px-2"
-                        onClick={() => {
+                    <Lightbulb className="h-3 w-3 mr-1 shrink-0" />
+                    <span className="truncate">{suggestion}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <Separator className="my-2" />
+
+            {/* Messages */}
+            <ScrollArea className="flex-1 px-3 sm:px-4">
+              <div className="space-y-3 py-2">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[85%] p-2.5 sm:p-3 rounded-lg text-xs sm:text-sm leading-relaxed ${
+                        message.type === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                      {message.type === 'ai' && message.content.includes('Apply Content') && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2 text-xs h-7 px-3"
+                          onClick={() => {
                           // Extract the generated content (everything before the apply instruction)
                           const generatedText = message.content.split('*Click "Apply Content"')[0].trim();
                           
@@ -510,48 +511,49 @@ What would you like me to help you write?`;
                           setShowApplyDialog(true);
                         }}
                       >
-                        Apply Content
-                      </Button>
-                    )}
-                    <div className="text-[10px] sm:text-xs opacity-70 mt-0.5 sm:mt-1">
-                      {message.timestamp.toLocaleTimeString()}
+                          Apply Content
+                        </Button>
+                      )}
+                      <div className="text-[10px] sm:text-xs opacity-60 mt-1">
+                        {message.timestamp.toLocaleTimeString()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-muted p-2 sm:p-3 rounded-lg text-sm mr-2 sm:mr-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-            <div ref={messagesEndRef} />
-          </ScrollArea>
+                )}
+              </div>
+              <div ref={messagesEndRef} />
+            </ScrollArea>
 
-          {/* Input */}
-          <div className="flex gap-1.5 sm:gap-2 pt-2 sm:pt-4 border-t">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={`Ask about Chapter ${chapterNumber}...`}
-              className="flex-1 text-xs sm:text-sm h-8 sm:h-9"
-              disabled={isLoading}
-            />
-            <Button 
-              size="sm" 
-              onClick={handleSendMessage}
-              disabled={!input.trim() || isLoading}
-              className="px-2 sm:px-3 h-8 sm:h-9 shrink-0"
-            >
-              <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </Button>
+            {/* Input */}
+            <div className="flex gap-2 p-3 sm:p-4 border-t bg-background/95">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={`Ask about Chapter ${chapterNumber}...`}
+                className="flex-1 text-xs sm:text-sm h-9"
+                disabled={isLoading}
+              />
+              <Button 
+                size="sm" 
+                onClick={handleSendMessage}
+                disabled={!input.trim() || isLoading}
+                className="px-3 h-9 shrink-0"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       )}
