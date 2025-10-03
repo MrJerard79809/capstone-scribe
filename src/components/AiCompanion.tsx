@@ -424,22 +424,24 @@ What would you like me to help you write?`;
   }
 
   return (
-    <Card className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${
-      isExpanded ? 'w-96 h-[600px]' : 'w-80 h-16'
+    <Card className={`fixed bottom-2 right-2 sm:bottom-4 sm:right-4 z-50 transition-all duration-300 ${
+      isExpanded 
+        ? 'w-[calc(100vw-1rem)] sm:w-96 h-[85vh] sm:h-[600px]' 
+        : 'w-[calc(100vw-1rem)] sm:w-80 h-14 sm:h-16'
     } shadow-lg border-primary/20`}>
-      <CardHeader className="pb-2 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+      <CardHeader className="pb-2 cursor-pointer p-3 sm:p-4" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Bot className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             </div>
-            <div>
-              <CardTitle className="text-sm">AI Companion</CardTitle>
-              <p className="text-xs text-muted-foreground">Chapter {chapterNumber} Helper</p>
+            <div className="min-w-0">
+              <CardTitle className="text-xs sm:text-sm truncate">AI Companion</CardTitle>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Chapter {chapterNumber} Helper</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Badge variant="outline" className="text-xs">
+          <div className="flex items-center gap-1 shrink-0">
+            <Badge variant="outline" className="text-[10px] sm:text-xs hidden sm:flex">
               <Sparkles className="h-3 w-3 mr-1" />
               Active
             </Badge>
@@ -451,49 +453,49 @@ What would you like me to help you write?`;
       </CardHeader>
 
       {isExpanded && (
-        <CardContent className="flex flex-col h-[500px] p-4 pt-0">
+        <CardContent className="flex flex-col h-[calc(85vh-3.5rem)] sm:h-[500px] p-3 sm:p-4 pt-0">
           {/* Quick Suggestions */}
-          <div className="mb-4">
-            <p className="text-xs font-medium mb-2 text-muted-foreground">Quick Help:</p>
+          <div className="mb-3 sm:mb-4">
+            <p className="text-[10px] sm:text-xs font-medium mb-1.5 sm:mb-2 text-muted-foreground">Quick Help:</p>
             <div className="flex flex-wrap gap-1">
               {getChapterSuggestions().slice(0, 2).map((suggestion, index) => (
                 <Button
                   key={index}
                   variant="outline"
                   size="sm"
-                  className="text-xs h-6 px-2"
+                  className="text-[10px] sm:text-xs h-6 sm:h-7 px-1.5 sm:px-2"
                   onClick={() => applySuggestion(suggestion)}
                 >
-                  <Lightbulb className="h-3 w-3 mr-1" />
-                  {suggestion}
+                  <Lightbulb className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                  <span className="truncate">{suggestion}</span>
                 </Button>
               ))}
             </div>
           </div>
 
-          <Separator className="mb-4" />
+          <Separator className="mb-3 sm:mb-4" />
 
           {/* Messages */}
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 pr-2 sm:pr-4">
+            <div className="space-y-2 sm:space-y-4">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] p-3 rounded-lg text-sm ${
+                    className={`max-w-[90%] sm:max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
                       message.type === 'user'
-                        ? 'bg-primary text-primary-foreground ml-4'
-                        : 'bg-muted mr-4'
+                        ? 'bg-primary text-primary-foreground ml-2 sm:ml-4'
+                        : 'bg-muted mr-2 sm:mr-4'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{message.content}</div>
+                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
                     {message.type === 'ai' && message.content.includes('Apply Content') && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="mt-2 text-xs h-6"
+                        className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs h-6 sm:h-7 px-2"
                         onClick={() => {
                           // Extract the generated content (everything before the apply instruction)
                           const generatedText = message.content.split('*Click "Apply Content"')[0].trim();
@@ -511,7 +513,7 @@ What would you like me to help you write?`;
                         Apply Content
                       </Button>
                     )}
-                    <div className="text-xs opacity-70 mt-1">
+                    <div className="text-[10px] sm:text-xs opacity-70 mt-0.5 sm:mt-1">
                       {message.timestamp.toLocaleTimeString()}
                     </div>
                   </div>
@@ -519,7 +521,7 @@ What would you like me to help you write?`;
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-muted p-3 rounded-lg text-sm mr-4">
+                  <div className="bg-muted p-2 sm:p-3 rounded-lg text-sm mr-2 sm:mr-4">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -533,22 +535,22 @@ What would you like me to help you write?`;
           </ScrollArea>
 
           {/* Input */}
-          <div className="flex gap-2 pt-4 border-t">
+          <div className="flex gap-1.5 sm:gap-2 pt-2 sm:pt-4 border-t">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={`Ask about Chapter ${chapterNumber}...`}
-              className="flex-1 text-sm"
+              className="flex-1 text-xs sm:text-sm h-8 sm:h-9"
               disabled={isLoading}
             />
             <Button 
               size="sm" 
               onClick={handleSendMessage}
               disabled={!input.trim() || isLoading}
-              className="px-3"
+              className="px-2 sm:px-3 h-8 sm:h-9 shrink-0"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </CardContent>
@@ -556,11 +558,11 @@ What would you like me to help you write?`;
 
       {/* Apply Content Dialog */}
       <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Where would you like to apply this content?</DialogTitle>
+            <DialogTitle className="text-sm sm:text-base">Where would you like to apply this content?</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <Button
               onClick={() => {
                 onContentGenerated?.('introduction', pendingContent);
