@@ -722,6 +722,35 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
                           updateSectionContent(activeChapter, sectionIndex, 'content', content);
                         }
                       }}
+                      onAutoApplyContent={(content, contentType) => {
+                        // Auto-apply content based on type detection
+                        const lowerContent = content.toLowerCase();
+                        let applied = false;
+                        
+                        // Check which section to apply to
+                        if (lowerContent.includes('introduction') || lowerContent.includes('background')) {
+                          updateChapterContent(activeChapter, 'introduction', content);
+                          toast({ title: "Content Applied", description: "Content added to Introduction section." });
+                          applied = true;
+                        } else if (lowerContent.includes('conclusion') || lowerContent.includes('summary')) {
+                          updateChapterContent(activeChapter, 'conclusion', content);
+                          toast({ title: "Content Applied", description: "Content added to Conclusion section." });
+                          applied = true;
+                        } else if (currentChapter.content.sections.length > 0) {
+                          // Apply to first section if no specific type detected
+                          updateSectionContent(activeChapter, 0, 'content', content);
+                          toast({ 
+                            title: "Content Applied", 
+                            description: `Content added to ${currentChapter.content.sections[0].title || 'Section 1'}.` 
+                          });
+                          applied = true;
+                        }
+                        
+                        if (!applied) {
+                          updateChapterContent(activeChapter, 'introduction', content);
+                          toast({ title: "Content Applied", description: "Content added to Introduction section." });
+                        }
+                      }}
                     />
                   )}
                 </div>
