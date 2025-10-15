@@ -348,6 +348,55 @@ Based on the findings of this research, the following recommendations are propos
       }
     };
 
+    // Handle "add more" or "expand" requests
+    if (lowercaseInput.includes('add more') || lowercaseInput.includes('expand') || 
+        lowercaseInput.includes('elaborate') || lowercaseInput.includes('tell me more') ||
+        lowercaseInput.includes('continue') || lowercaseInput.includes('more details')) {
+      return `**Additional Content:**
+
+I'd be happy to expand on this topic! Here's more detailed content about ${chapterTitle.toLowerCase()}:
+
+**Expanded Analysis:**
+Building upon the previous discussion, it is essential to consider the broader implications and contextual factors that influence this area of study. The complexity of ${chapterTitle.toLowerCase()} requires a multifaceted approach that takes into account various stakeholder perspectives, historical developments, and emerging trends.
+
+**Key Considerations:**
+1. **Contextual Factors:** The specific circumstances and environmental conditions that shape outcomes in this field
+2. **Stakeholder Perspectives:** Different viewpoints from researchers, practitioners, and affected communities
+3. **Emerging Trends:** Recent developments and innovations that are reshaping the landscape
+4. **Critical Challenges:** Persistent obstacles that require innovative solutions and collaborative approaches
+
+**Further Discussion:**
+Research in this area continues to evolve, with new methodologies and theoretical frameworks emerging to address longstanding questions. The integration of interdisciplinary approaches has proven particularly valuable in generating insights that transcend traditional boundaries and offer novel perspectives on complex problems.
+
+*Click "Apply Content" to add this expanded content to your document.*`;
+    }
+
+    // Handle specific questions about content
+    if (lowercaseInput.includes('what') || lowercaseInput.includes('how') || 
+        lowercaseInput.includes('why') || lowercaseInput.includes('explain')) {
+      return `Great question! For Chapter ${chapterNumber} - ${chapterTitle}, here's my response:
+
+Regarding ${chapterTitle.toLowerCase()}, it's important to understand that this aspect of your research serves a crucial role in establishing the foundation and credibility of your work.
+
+**Key Points to Consider:**
+- This chapter helps readers understand the context and significance of your research
+- It establishes your expertise and knowledge of the field
+- It provides the necessary background for your methodology and findings
+- It connects your work to the broader academic conversation
+
+**How I Can Help:**
+I can generate specific content sections that you can review and add to your document. Just ask me to "generate" or "write" any section you need:
+- Problem Statement
+- Research Objectives
+- Background Information
+- Research Questions
+- Literature Review
+- Methodology
+- And more!
+
+What specific section would you like me to help you create?`;
+    }
+
     // Check if this is a content generation request
     const generators = contentGenerators[chapterNumber] || {};
     for (const [key, generator] of Object.entries(generators)) {
