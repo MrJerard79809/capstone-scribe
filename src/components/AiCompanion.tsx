@@ -35,10 +35,9 @@ interface AiCompanionProps {
     conclusion: string;
   };
   onContentGenerated?: (sectionType: 'introduction' | 'section' | 'conclusion', content: string, sectionIndex?: number) => void;
-  onAutoApplyContent?: (content: string, contentType: string) => void;
 }
 
-const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGenerated, onAutoApplyContent }: AiCompanionProps) => {
+const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGenerated }: AiCompanionProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -390,33 +389,10 @@ What would you like me to help you write?`;
       
       const aiResponse = await generateAiResponse(input);
       
-      // Check if this is a content generation request
-      const isContentGeneration = aiResponse.includes('*Click "Apply Content"');
-      
-      let displayContent = cleanText(aiResponse);
-      
-      if (isContentGeneration && onAutoApplyContent) {
-        // Extract and auto-apply the generated content
-        const generatedText = aiResponse.split('*Click "Apply Content"')[0].trim();
-        let cleanContent = generatedText
-          .replace(/\*\*([^*]+)\*\*/g, '$1')
-          .replace(/^\*\*Generated [^:]+:\*\*\s*/gm, '')
-          .trim();
-        
-        // Detect content type from the response
-        const contentType = aiResponse.toLowerCase();
-        
-        // Auto-apply the content
-        onAutoApplyContent(cleanContent, contentType);
-        
-        // Update the display message to show it was applied
-        displayContent = cleanText(generatedText) + "\n\n✓ Content automatically applied to your document!";
-      }
-      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: displayContent,
+        content: aiResponse, // Keep original content with formatting
         timestamp: new Date()
       };
 
@@ -516,6 +492,29 @@ What would you like me to help you write?`;
                       }`}
                     >
                       <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                      {message.type === 'ai' && message.content.includes('Click "Apply Content"') && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2 text-xs h-7 px-3"
+                          onClick={() => {
+                            // Extract the generated content (everything before the apply instruction)
+                            const generatedText = message.content.split('Click "Apply Content"')[0].trim();
+                            
+                            // Clean up the content by removing markdown formatting
+                            let cleanContent = generatedText
+                              .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove **bold** formatting
+                              .replace(/^\*\*Generated [^:]+:\*\*\s*/gm, '') // Remove "Generated X:" headers
+                              .replace(/^Generated [^:]+:\s*/gm, '') // Remove "Generated X:" without asterisks
+                              .trim();
+
+                            setPendingContent(cleanContent);
+                            setShowApplyDialog(true);
+                          }}
+                        >
+                          Apply Content
+                        </Button>
+                      )}
                       <div className="text-[10px] sm:text-xs opacity-60 mt-1">
                         {message.timestamp.toLocaleTimeString()}
                       </div>
