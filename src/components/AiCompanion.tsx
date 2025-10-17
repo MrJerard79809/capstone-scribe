@@ -348,53 +348,29 @@ Based on the findings of this research, the following recommendations are propos
       }
     };
 
-    // Handle "add more" or "expand" requests
+    // Handle follow-up questions and "add more" requests
     if (lowercaseInput.includes('add more') || lowercaseInput.includes('expand') || 
-        lowercaseInput.includes('elaborate') || lowercaseInput.includes('tell me more') ||
-        lowercaseInput.includes('continue') || lowercaseInput.includes('more details')) {
-      return `**Additional Content:**
+        lowercaseInput.includes('elaborate') || lowercaseInput.includes('more')) {
+      
+      // Get the last AI message to understand context
+      const lastAiMessage = messages.filter(m => m.type === 'ai').pop();
+      
+      if (lastAiMessage && lastAiMessage.content.includes('*Click "Apply Content"')) {
+        return `I understand you want more content on this topic. Could you be more specific about what you'd like me to expand on? For example:
 
-I'd be happy to expand on this topic! Here's more detailed content about ${chapterTitle.toLowerCase()}:
+- "Add more details about the methodology"
+- "Expand the background section"  
+- "Give me more research objectives"
+- "Add more examples to the problem statement"
 
-**Expanded Analysis:**
-Building upon the previous discussion, it is essential to consider the broader implications and contextual factors that influence this area of study. The complexity of ${chapterTitle.toLowerCase()} requires a multifaceted approach that takes into account various stakeholder perspectives, historical developments, and emerging trends.
+Or, you can ask me to generate a different section entirely! Try one of the suggestions above.`;
+      }
+      
+      return `I'd be happy to help with more content! What specific section would you like me to generate or expand? Here are some options for Chapter ${chapterNumber}:
 
-**Key Considerations:**
-1. **Contextual Factors:** The specific circumstances and environmental conditions that shape outcomes in this field
-2. **Stakeholder Perspectives:** Different viewpoints from researchers, practitioners, and affected communities
-3. **Emerging Trends:** Recent developments and innovations that are reshaping the landscape
-4. **Critical Challenges:** Persistent obstacles that require innovative solutions and collaborative approaches
+${getChapterSuggestions().map((s, i) => `${i + 1}. ${s}`).join('\n')}
 
-**Further Discussion:**
-Research in this area continues to evolve, with new methodologies and theoretical frameworks emerging to address longstanding questions. The integration of interdisciplinary approaches has proven particularly valuable in generating insights that transcend traditional boundaries and offer novel perspectives on complex problems.
-
-*Click "Apply Content" to add this expanded content to your document.*`;
-    }
-
-    // Handle specific questions about content
-    if (lowercaseInput.includes('what') || lowercaseInput.includes('how') || 
-        lowercaseInput.includes('why') || lowercaseInput.includes('explain')) {
-      return `Great question! For Chapter ${chapterNumber} - ${chapterTitle}, here's my response:
-
-Regarding ${chapterTitle.toLowerCase()}, it's important to understand that this aspect of your research serves a crucial role in establishing the foundation and credibility of your work.
-
-**Key Points to Consider:**
-- This chapter helps readers understand the context and significance of your research
-- It establishes your expertise and knowledge of the field
-- It provides the necessary background for your methodology and findings
-- It connects your work to the broader academic conversation
-
-**How I Can Help:**
-I can generate specific content sections that you can review and add to your document. Just ask me to "generate" or "write" any section you need:
-- Problem Statement
-- Research Objectives
-- Background Information
-- Research Questions
-- Literature Review
-- Methodology
-- And more!
-
-What specific section would you like me to help you create?`;
+Just tell me which one you'd like!`;
     }
 
     // Check if this is a content generation request
@@ -405,17 +381,15 @@ What specific section would you like me to help you create?`;
       }
     }
 
-    // If not a specific content generation request, provide guidance
-    return `I can help you generate specific content for Chapter ${chapterNumber}. Try asking me to:
+    // If not a specific content generation request, provide helpful guidance
+    const suggestions = getChapterSuggestions();
+    return `I'm here to help! I can generate content for any section of Chapter ${chapterNumber}. Here are some things you can ask me:
 
-• "Generate a problem statement"
-• "Write research objectives" 
-• "Create a background section"
-• "Draft research questions"
+${suggestions.map((s, i) => `${i + 1}. "${s}"`).join('\n')}
 
-Or describe what specific content you need, and I'll create it for you to review and apply to your document.
+Just tell me what you need, and I'll create it for you. You can then review it and click "Apply Content" to add it to your document. 
 
-What would you like me to help you write?`;
+What would you like me to help you with?`;
   };
 
   const handleSendMessage = async () => {
