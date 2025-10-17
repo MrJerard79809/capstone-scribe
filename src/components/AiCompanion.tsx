@@ -118,279 +118,37 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGen
   };
 
   const generateAiResponse = async (userMessage: string): Promise<string> => {
-    const lowercaseInput = userMessage.toLowerCase();
-    
-    // Generate actual content based on the chapter and request
-    const contentGenerators: Record<number, Record<string, () => string>> = {
-      1: {
-        "problem statement": () => `**Generated Problem Statement:**
-
-Despite significant advancements in ${chapterTitle.toLowerCase()}, there remains a critical gap in understanding how current approaches address the evolving challenges in this field. This gap has resulted in limited practical solutions and theoretical frameworks that adequately address the complex nature of the problem.
-
-This research addresses the need for a comprehensive analysis of ${chapterTitle.toLowerCase()} by examining current practices, identifying key challenges, and proposing evidence-based solutions that can enhance both theoretical understanding and practical applications in the field.
-
-*Click "Apply Content" to add this to your document.*`,
-
-        "research objectives": () => `**Generated Research Objectives:**
-
-**General Objective:**
-To investigate and analyze the current state of ${chapterTitle.toLowerCase()} and develop evidence-based recommendations for improvement.
-
-**Specific Objectives:**
-1. To examine the current practices and approaches in ${chapterTitle.toLowerCase()}
-2. To identify key challenges and limitations in existing methodologies
-3. To analyze the effectiveness of current solutions and interventions
-4. To develop practical recommendations for enhancing outcomes
-5. To contribute to the theoretical understanding of the field
-
-*Click "Apply Content" to add these objectives to your document.*`,
-
-        "background": () => `**Generated Background Section:**
-
-The field of ${chapterTitle.toLowerCase()} has experienced significant evolution over the past decade, driven by technological advancements, changing societal needs, and emerging research findings. Understanding the historical context and current landscape is essential for identifying areas that require further investigation.
-
-Recent studies have highlighted several key trends in this area, including the increasing complexity of challenges, the need for interdisciplinary approaches, and the growing importance of evidence-based solutions. However, despite these advances, significant gaps remain in our understanding of how to effectively address the multifaceted nature of the problems encountered in this field.
-
-The importance of this research lies in its potential to bridge existing gaps between theory and practice, providing valuable insights that can inform future policy, practice, and research directions.
-
-*Click "Apply Content" to add this background to your document.*`,
-
-        "research questions": () => `**Generated Research Questions:**
-
-**Primary Research Question:**
-How can current approaches to ${chapterTitle.toLowerCase()} be enhanced to better address contemporary challenges and improve outcomes?
-
-**Secondary Research Questions:**
-1. What are the key factors that influence success in current practices?
-2. What barriers exist that limit the effectiveness of existing approaches?
-3. How do stakeholders perceive the current state of practice in this field?
-4. What evidence-based strategies show the most promise for improvement?
-5. How can theoretical frameworks be better aligned with practical applications?
-
-*Click "Apply Content" to add these research questions to your document.*`
-      },
-
-      2: {
-        "literature themes": () => `**Generated Literature Review Themes:**
-
-**Theme 1: Theoretical Foundations**
-The literature reveals several key theoretical frameworks that underpin current understanding of ${chapterTitle.toLowerCase()}. These include [relevant theories] which provide the conceptual foundation for this field of study.
-
-**Theme 2: Methodological Approaches**
-Research in this area has employed diverse methodological approaches, ranging from quantitative surveys to qualitative case studies. The literature shows a trend toward mixed-methods approaches that capitalize on the strengths of both paradigms.
-
-**Theme 3: Key Findings and Patterns**
-Across multiple studies, consistent patterns emerge regarding the factors that influence success and the challenges that persist in this field. These findings provide important insights for future research and practice.
-
-**Theme 4: Gaps and Contradictions**
-While the literature provides valuable insights, several gaps and contradictions exist that warrant further investigation. These areas represent opportunities for meaningful contribution to the field.
-
-*Click "Apply Content" to add these themes to your document.*`,
-
-        "gap analysis": () => `**Generated Gap Analysis:**
-
-**Identified Research Gaps:**
-
-1. **Methodological Gaps:** Limited longitudinal studies examining the long-term effects of interventions in ${chapterTitle.toLowerCase()}.
-
-2. **Population Gaps:** Insufficient research focusing on diverse populations and contexts, particularly underrepresented groups.
-
-3. **Theoretical Gaps:** Lack of comprehensive theoretical frameworks that integrate multiple perspectives and approaches.
-
-4. **Practical Gaps:** Limited research on the translation of theoretical findings into practical applications and real-world implementations.
-
-5. **Measurement Gaps:** Absence of standardized assessment tools and outcome measures specific to this field.
-
-**Opportunities for Contribution:**
-This study addresses these gaps by providing [specific contributions your research will make], thereby advancing both theoretical understanding and practical applications in the field.
-
-*Click "Apply Content" to add this gap analysis to your document.*`
-      },
-
-      3: {
-        "methodology": () => `**Generated Methodology Section:**
-
-**Research Design:**
-This study employs a [mixed-methods/quantitative/qualitative] research design to comprehensively investigate ${chapterTitle.toLowerCase()}. This approach was selected because it allows for both breadth and depth of understanding while addressing the research objectives effectively.
-
-**Research Approach:**
-The research follows a [descriptive/exploratory/explanatory] approach, enabling systematic investigation of the research questions while maintaining flexibility to explore emerging themes and patterns.
-
-**Justification:**
-This methodological approach is most appropriate for this study because it:
-- Aligns with the research objectives and questions
-- Allows for comprehensive data collection and analysis
-- Provides both statistical significance and contextual understanding
-- Enables triangulation of findings for enhanced validity
-
-**Data Collection Strategy:**
-Data will be collected through multiple sources to ensure comprehensive coverage of the research topic and enhance the reliability of findings.
-
-*Click "Apply Content" to add this methodology to your document.*`,
-
-        "data collection": () => `**Generated Data Collection Plan:**
-
-**Data Collection Methods:**
-
-1. **Primary Data Collection:**
-   - Surveys: Structured questionnaires to gather quantitative data from participants
-   - Interviews: Semi-structured interviews to explore experiences and perspectives in depth
-   - Observations: Systematic observation of practices and behaviors in natural settings
-
-2. **Secondary Data Collection:**
-   - Document analysis: Review of relevant reports, policies, and organizational documents
-   - Literature review: Systematic analysis of existing research and publications
-   - Archival data: Historical records and databases relevant to the study
-
-**Data Collection Timeline:**
-- Phase 1 (Months 1-2): Secondary data collection and literature review
-- Phase 2 (Months 3-4): Survey data collection
-- Phase 3 (Months 5-6): Interview data collection
-- Phase 4 (Months 7-8): Data analysis and interpretation
-
-**Quality Assurance:**
-All data collection procedures will follow established protocols to ensure reliability, validity, and ethical compliance.
-
-*Click "Apply Content" to add this data collection plan to your document.*`
-      },
-
-      4: {
-        "results summary": () => `**Generated Results Summary:**
-
-**Overview of Findings:**
-The data analysis revealed several significant findings related to ${chapterTitle.toLowerCase()}. The results are organized according to the research objectives and questions, providing a systematic presentation of the key discoveries.
-
-**Key Findings:**
-
-1. **Primary Finding:** The analysis indicates that [describe main finding based on your research focus]
-
-2. **Supporting Findings:** 
-   - Participants demonstrated significant variation in [relevant aspect]
-   - Strong correlations were found between [relevant variables]
-   - Qualitative themes emerged around [key themes]
-
-3. **Unexpected Findings:** 
-   The data revealed some unexpected patterns, particularly regarding [describe unexpected results]
-
-**Statistical Significance:**
-The results show statistically significant relationships (p < 0.05) between key variables, supporting the research hypotheses and providing confidence in the findings.
-
-**Summary:**
-These findings contribute to our understanding of ${chapterTitle.toLowerCase()} and provide evidence for the recommendations presented in the following sections.
-
-*Click "Apply Content" to add this results summary to your document.*`,
-
-        "data analysis": () => `**Generated Data Analysis Section:**
-
-**Analytical Approach:**
-The data analysis followed a systematic approach designed to address each research objective comprehensively. Both quantitative and qualitative analytical techniques were employed to maximize the insights gained from the collected data.
-
-**Quantitative Analysis:**
-- Descriptive statistics were calculated to summarize participant characteristics and key variables
-- Inferential statistics (t-tests, ANOVA, correlation analysis) were used to test hypotheses
-- Effect sizes were calculated to determine the practical significance of findings
-
-**Qualitative Analysis:**
-- Thematic analysis was conducted to identify patterns and themes in interview data
-- Coding procedures followed established qualitative research protocols
-- Member checking was employed to enhance the credibility of interpretations
-
-**Data Integration:**
-The quantitative and qualitative findings were integrated through a convergent parallel design, allowing for triangulation of results and enhanced understanding of the research topic.
-
-**Validation Procedures:**
-Multiple validation strategies were employed including peer debriefing, member checking, and triangulation to ensure the trustworthiness of the findings.
-
-*Click "Apply Content" to add this data analysis section to your document.*`
-      },
-
-      5: {
-        "conclusion summary": () => `**Generated Conclusion Summary:**
-
-**Research Summary:**
-This study investigated ${chapterTitle.toLowerCase()} through a comprehensive research approach that addressed the identified gaps in existing literature. The research successfully achieved its objectives and provided valuable insights into the field.
-
-**Key Contributions:**
-1. **Theoretical Contribution:** The study provides new theoretical insights that enhance understanding of [relevant concepts]
-2. **Methodological Contribution:** The research methodology offers a framework for future studies in this area
-3. **Practical Contribution:** The findings provide evidence-based recommendations for practitioners and policymakers
-
-**Research Questions Addressed:**
-Each research question was systematically addressed through the data collection and analysis process:
-- The primary research question was answered through [summarize key finding]
-- Secondary questions provided additional insights into [supporting findings]
-
-**Significance of Findings:**
-The results of this study are significant because they [explain the importance and implications of your findings for the field].
-
-*Click "Apply Content" to add this conclusion summary to your document.*`,
-
-        "recommendations": () => `**Generated Recommendations:**
-
-Based on the findings of this research, the following recommendations are proposed:
-
-**Recommendations for Practice:**
-1. **Implementation Recommendation:** Practitioners should consider adopting [specific practice] based on the evidence that it [explain benefit]
-2. **Training Recommendation:** Professional development programs should incorporate [specific training elements] to enhance effectiveness
-3. **Policy Recommendation:** Organizations should develop policies that support [specific policy area] to improve outcomes
-
-**Recommendations for Future Research:**
-1. **Longitudinal Studies:** Future research should examine the long-term effects of the interventions identified in this study
-2. **Comparative Studies:** Research comparing different approaches to ${chapterTitle.toLowerCase()} would provide valuable insights
-3. **Diverse Populations:** Studies involving diverse populations and contexts would enhance the generalizability of findings
-
-**Implementation Considerations:**
-- Resource requirements and feasibility should be considered when implementing recommendations
-- Stakeholder engagement is crucial for successful implementation
-- Monitoring and evaluation systems should be established to assess effectiveness
-
-*Click "Apply Content" to add these recommendations to your document.*`
+    try {
+      // Call the backend AI function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capstone-chat`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            message: userMessage,
+            chapterNumber,
+            chapterTitle,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get AI response');
       }
-    };
 
-    // Handle follow-up questions and "add more" requests
-    if (lowercaseInput.includes('add more') || lowercaseInput.includes('expand') || 
-        lowercaseInput.includes('elaborate') || lowercaseInput.includes('more')) {
-      
-      // Get the last AI message to understand context
-      const lastAiMessage = messages.filter(m => m.type === 'ai').pop();
-      
-      if (lastAiMessage && lastAiMessage.content.includes('*Click "Apply Content"')) {
-        return `I understand you want more content on this topic. Could you be more specific about what you'd like me to expand on? For example:
-
-- "Add more details about the methodology"
-- "Expand the background section"  
-- "Give me more research objectives"
-- "Add more examples to the problem statement"
-
-Or, you can ask me to generate a different section entirely! Try one of the suggestions above.`;
-      }
-      
-      return `I'd be happy to help with more content! What specific section would you like me to generate or expand? Here are some options for Chapter ${chapterNumber}:
-
-${getChapterSuggestions().map((s, i) => `${i + 1}. ${s}`).join('\n')}
-
-Just tell me which one you'd like!`;
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('AI chat error:', error);
+      throw error;
     }
-
-    // Check if this is a content generation request
-    const generators = contentGenerators[chapterNumber] || {};
-    for (const [key, generator] of Object.entries(generators)) {
-      if (lowercaseInput.includes(key.split(' ')[0])) { // Match on first word (generate, write, create, draft)
-        return generator();
-      }
-    }
-
-    // If not a specific content generation request, provide helpful guidance
-    const suggestions = getChapterSuggestions();
-    return `I'm here to help! I can generate content for any section of Chapter ${chapterNumber}. Here are some things you can ask me:
-
-${suggestions.map((s, i) => `${i + 1}. "${s}"`).join('\n')}
-
-Just tell me what you need, and I'll create it for you. You can then review it and click "Apply Content" to add it to your document. 
-
-What would you like me to help you with?`;
   };
+
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -407,25 +165,40 @@ What would you like me to help you with?`;
     setIsLoading(true);
 
     try {
-      // Simulate AI processing delay
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
       const aiResponse = await generateAiResponse(input);
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: aiResponse, // Keep original content with formatting
+        content: aiResponse,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
+      console.error('Chat error:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
       toast({
-        title: "AI Companion Error",
-        description: "Sorry, I'm having trouble responding right now. Please try again.",
+        title: "Unable to respond",
+        description: errorMessage.includes('Rate limit') 
+          ? "Too many requests. Please wait a moment and try again."
+          : errorMessage.includes('credits')
+          ? "AI credits depleted. Please contact support."
+          : "I'm having trouble responding. Please try again.",
         variant: "destructive"
       });
+      
+      // Add an error message to chat
+      const errorAiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content: "I apologize, but I'm having trouble responding right now. Please try again in a moment.",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorAiMessage]);
     } finally {
       setIsLoading(false);
     }

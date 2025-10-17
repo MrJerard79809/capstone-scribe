@@ -1,0 +1,4 @@
+project_id = "lriokkhgdkhjpnszawio"
+
+[functions.capstone-chat]
+verify_jwt = false
