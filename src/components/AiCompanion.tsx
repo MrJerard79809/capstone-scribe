@@ -288,20 +288,22 @@ const AiCompanion = ({ chapterNumber, chapterTitle, currentContent, onContentGen
                       }`}
                     >
                       <div className="whitespace-pre-wrap break-words">{message.content}</div>
-                      {message.type === 'ai' && message.content.includes('Click "Apply Content"') && (
+                      {message.type === 'ai' && message.content.toLowerCase().includes('apply content') && (
                         <Button
                           size="sm"
                           variant="outline"
                           className="mt-2 text-xs h-7 px-3"
                           onClick={() => {
                             // Extract the generated content (everything before the apply instruction)
-                            const generatedText = message.content.split('Click "Apply Content"')[0].trim();
+                            const contentParts = message.content.split(/Click ['"]Apply Content['"]/i);
+                            const generatedText = contentParts[0].trim();
                             
                             // Clean up the content by removing markdown formatting
                             let cleanContent = generatedText
                               .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove **bold** formatting
                               .replace(/^\*\*Generated [^:]+:\*\*\s*/gm, '') // Remove "Generated X:" headers
                               .replace(/^Generated [^:]+:\s*/gm, '') // Remove "Generated X:" without asterisks
+                              .replace(/^#+\s+/gm, '') // Remove markdown headers
                               .trim();
 
                             setPendingContent(cleanContent);
