@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
-import AiCompanion from './AiCompanion';
 
 interface DocumentChapter {
   number: number;
@@ -706,24 +705,6 @@ const DocumentEditor = ({ initialProject, onBack }: DocumentEditorProps) => {
                       <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
                   </div>
-
-                  {/* AI Companion - Only for chapters 1-5 */}
-                  {activeChapter <= 5 && currentChapter && (
-                    <AiCompanion
-                      chapterNumber={activeChapter}
-                      chapterTitle={currentChapter.title}
-                      currentContent={currentChapter.content}
-                      onContentGenerated={(sectionType, content, sectionIndex) => {
-                        if (sectionType === 'introduction') {
-                          updateChapterContent(activeChapter, 'introduction', content);
-                        } else if (sectionType === 'conclusion') {
-                          updateChapterContent(activeChapter, 'conclusion', content);
-                        } else if (sectionType === 'section' && sectionIndex !== undefined) {
-                          updateSectionContent(activeChapter, sectionIndex, 'content', content);
-                        }
-                      }}
-                    />
-                  )}
                 </div>
               )}
             </div>
