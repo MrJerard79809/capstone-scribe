@@ -1,9 +1,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const requestSchema = z.object({
+  message: z.string().trim().min(1, "Message cannot be empty").max(2000, "Message too long (max 2000 characters)"),
+  chapterNumber: z.number().int().min(1).max(5, "Invalid chapter number"),
+  chapterTitle: z.string().trim().min(1, "Chapter title required").max(200, "Chapter title too long")
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,7 +19,22 @@ serve(async (req) => {
   }
 
   try {
-    const { message, chapterNumber, chapterTitle } = await req.json();
+    // Parse and validate input
+    const rawData = await req.json();
+    const validationResult = requestSchema.safeParse(rawData);
+    
+    if (!validationResult.success) {
+      console.error("Validation error:", validationResult.error.errors);
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid input", 
+          details: validationResult.error.errors.map(e => e.message).join(", ")
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const { message, chapterNumber, chapterTitle } = validationResult.data;
     
     if (!message || !chapterNumber || !chapterTitle) {
       return new Response(
